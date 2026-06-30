@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Batik Fabric Design Studio - Professional Textile Designer</title>
+    <title>Batik Fabric Design Studio — Professional Textile Designer</title>
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -12,7 +12,7 @@
     <!-- Fabric.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js">
     </script>
-    <!-- Firebase -->
+    <!-- Firebase (demo only, replace with your own config) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js">
     </script>
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js">
@@ -68,6 +68,8 @@
             height: 100vh;
             width: 100vw;
             user-select: none;
+            margin: 0;
+            padding: 0;
         }
         ::-webkit-scrollbar {
             width: 5px;
@@ -333,6 +335,9 @@
             gap: 16px;
             text-align: center;
             padding: 40px;
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
         }
         .canvas-placeholder i {
             font-size: 64px;
@@ -354,6 +359,7 @@
             cursor: pointer;
             transition: var(--transition);
             background: var(--bg-card);
+            pointer-events: auto;
         }
         .canvas-placeholder .upload-zone:hover {
             border-color: var(--accent);
@@ -650,6 +656,7 @@
             display: flex;
             flex-direction: column;
             gap: 8px;
+            pointer-events: none;
         }
         .toast {
             padding: 12px 20px;
@@ -666,6 +673,7 @@
             gap: 10px;
             min-width: 200px;
             border: 1px solid var(--border-color);
+            pointer-events: auto;
         }
         .toast.success {
             border-left-color: var(--success);
@@ -726,6 +734,7 @@
             display: flex;
             gap: 10px;
             margin-top: 16px;
+            flex-wrap: wrap;
         }
         .modal .modal-actions button {
             flex: 1;
@@ -735,6 +744,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
+            min-width: 80px;
         }
         .modal .modal-actions .btn-cancel {
             background: var(--bg-hover);
@@ -774,6 +784,9 @@
                 width: 280px;
             }
             .sidebar-toggle {
+                display: flex !important;
+            }
+            .panel-toggle {
                 display: flex !important;
             }
         }
@@ -932,16 +945,8 @@
         .panel-toggle:hover {
             color: var(--text-primary);
         }
-        @media (max-width: 992px) {
-            .sidebar-toggle {
-                display: flex !important;
-            }
-            .panel-toggle {
-                display: flex !important;
-            }
-        }
 
-        /* Overlay for mobile sidebar/panel */
+        /* Mobile overlay */
         .mobile-overlay {
             display: none;
             position: fixed;
@@ -951,6 +956,34 @@
         }
         .mobile-overlay.open {
             display: block;
+        }
+
+        /* Canvas container */
+        #canvasContainer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #canvasContainer canvas {
+            position: relative;
+            z-index: 1;
+        }
+        #canvasContainer .canvas-placeholder {
+            z-index: 0;
+        }
+        /* Ensure placeholder is above canvas but behind interactions */
+        #canvasContainer .canvas-placeholder {
+            pointer-events: none;
+        }
+        #canvasContainer .canvas-placeholder .upload-zone {
+            pointer-events: auto;
+        }
+        #fabricCanvas {
+            position: relative;
+            z-index: 1;
         }
     </style>
 </head>
@@ -1032,7 +1065,7 @@
                 </div>
 
                 <div class="canvas-wrapper" id="canvasWrapper">
-                    <div id="canvasContainer" style="position:relative;width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                    <div id="canvasContainer">
                         <canvas id="fabricCanvas"></canvas>
                         <div class="canvas-placeholder" id="placeholder">
                             <i class="fas fa-upload"></i>
@@ -1044,7 +1077,6 @@
                                     Drop your pattern here
                                 </p>
                                 <p style="font-size:12px;color:var(--text-muted);">JPG, PNG, SVG • Up to 50MB</p>
-                                <input type="file" id="fileInput" accept=".jpg,.jpeg,.png,.svg" style="display:none;" />
                             </div>
                         </div>
                     </div>
@@ -1076,9 +1108,7 @@
                         </div>
                         <div class="panel-section">
                             <div class="section-title">Color Palette</div>
-                            <div class="color-grid" id="colorPaletteGrid">
-                                <!-- populated by JS -->
-                            </div>
+                            <div class="color-grid" id="colorPaletteGrid"></div>
                             <div class="input-group mt-2">
                                 <input type="color" id="customColorPicker" value="#c8a85e" />
                                 <button class="btn-sm" id="addColorBtn">Add</button>
@@ -1117,14 +1147,12 @@
                         </div>
                         <div class="panel-section">
                             <div class="section-title">AI Color Suggestions</div>
-                            <div class="color-grid" id="aiColorGrid">
-                                <!-- generated by JS -->
-                            </div>
+                            <div class="color-grid" id="aiColorGrid"></div>
                             <button class="btn-full secondary mt-2" id="generateAIColorsBtn"><i class="fas fa-magic"></i> Generate AI Colors</button>
                         </div>
                         <div class="panel-section">
                             <div class="section-title">Color Library</div>
-                            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                            <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
                                 <button class="btn-sm" data-library="batik">Batik</button>
                                 <button class="btn-sm" data-library="srilankan">Sri Lankan</button>
                                 <button class="btn-sm" data-library="nature">Nature</button>
@@ -1133,7 +1161,7 @@
                                 <button class="btn-sm" data-library="wedding">Wedding</button>
                                 <button class="btn-sm" data-library="kids">Kids</button>
                             </div>
-                            <div class="color-grid mt-2" id="libraryColorGrid"></div>
+                            <div class="color-grid" id="libraryColorGrid"></div>
                         </div>
                     </div>
 
@@ -1193,7 +1221,6 @@
             appId: "1:1234567890:web:abcdef123456"
         };
 
-        // Initialize Firebase (if config is valid)
         let firebaseInitialized = false;
         try {
             if (firebaseConfig.apiKey !== "AIzaSyDemoKey1234567890") {
@@ -1225,9 +1252,8 @@
             selectedColor: '#c8a85e',
             repeatMode: 'full',
             templateType: 'saree',
-            isDrawing: false,
             isLoaded: false,
-            userId: null,
+            isReady: false,
         };
 
         // ============================================================
@@ -1237,7 +1263,6 @@
         const canvasEl = $('fabricCanvas');
         const wrapper = $('canvasWrapper');
         const placeholder = $('placeholder');
-        const fileInput = $('fileInput');
         const uploadZone = $('uploadZone');
         const sidebar = $('sidebar');
         const rightPanel = $('rightPanel');
@@ -1284,45 +1309,61 @@
             const w = Math.min(rect.width - 40, 900);
             const h = Math.min(rect.height - 40, 700);
 
-            state.canvas = new fabric.Canvas(canvasEl, {
-                width: w,
-                height: h,
-                backgroundColor: '#1a1a1a',
-                selection: true,
-                preserveObjectStacking: true,
-                renderOnAddRemove: true,
-            });
+            try {
+                state.canvas = new fabric.Canvas(canvasEl, {
+                    width: Math.max(w, 200),
+                    height: Math.max(h, 200),
+                    backgroundColor: '#1a1a1a',
+                    selection: true,
+                    preserveObjectStacking: true,
+                    renderOnAddRemove: true,
+                });
 
-            state.canvas.on('object:modified', () => saveHistory());
-            state.canvas.on('object:added', () => saveHistory());
-            state.canvas.on('object:removed', () => saveHistory());
+                state.canvas.on('object:modified', () => saveHistory());
+                state.canvas.on('object:added', () => saveHistory());
+                state.canvas.on('object:removed', () => saveHistory());
 
-            // Zoom controls
-            $('zoomInBtn').onclick = () => zoomCanvas(0.1);
-            $('zoomOutBtn').onclick = () => zoomCanvas(-0.1);
-            $('zoomFitBtn').onclick = fitCanvas;
+                state.isReady = true;
 
-            // Resize handler
-            window.addEventListener('resize', () => {
-                const r = $('canvasContainer').getBoundingClientRect();
-                state.canvas.setWidth(Math.min(r.width - 40, 900));
-                state.canvas.setHeight(Math.min(r.height - 40, 700));
-                state.canvas.renderAll();
-            });
+                // Zoom controls
+                $('zoomInBtn').onclick = () => zoomCanvas(0.1);
+                $('zoomOutBtn').onclick = () => zoomCanvas(-0.1);
+                $('zoomFitBtn').onclick = fitCanvas;
 
-            // Setup drag & drop
-            setupDragDrop();
+                // Resize handler
+                let resizeTimer;
+                window.addEventListener('resize', () => {
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(() => {
+                        const r = $('canvasContainer').getBoundingClientRect();
+                        const newW = Math.min(r.width - 40, 900);
+                        const newH = Math.min(r.height - 40, 700);
+                        if (state.canvas) {
+                            state.canvas.setWidth(Math.max(newW, 200));
+                            state.canvas.setHeight(Math.max(newH, 200));
+                            state.canvas.renderAll();
+                        }
+                    }, 150);
+                });
 
-            // Save initial history
-            saveHistory();
-            updateZoomDisplay();
-            showToast('Canvas ready! Upload a pattern to begin.', 'info');
+                // Setup drag & drop
+                setupDragDrop();
+
+                // Save initial history
+                saveHistory();
+                updateZoomDisplay();
+                showToast('Canvas ready! Upload a pattern to begin.', 'info');
+            } catch (e) {
+                console.error('Canvas init error:', e);
+                showToast('Failed to initialize canvas. Please refresh.', 'error');
+            }
         }
 
         // ============================================================
         //  ZOOM
         // ============================================================
         function zoomCanvas(delta) {
+            if (!state.canvas) return;
             const z = state.zoom + delta;
             state.zoom = Math.max(0.2, Math.min(3, z));
             state.canvas.setZoom(state.zoom);
@@ -1331,10 +1372,12 @@
         }
 
         function fitCanvas() {
+            if (!state.canvas) return;
             const container = $('canvasContainer');
             const rect = container.getBoundingClientRect();
             const cw = state.canvas.getWidth();
             const ch = state.canvas.getHeight();
+            if (cw === 0 || ch === 0) return;
             const scaleX = (rect.width - 40) / cw;
             const scaleY = (rect.height - 40) / ch;
             state.zoom = Math.min(scaleX, scaleY, 1);
@@ -1352,21 +1395,40 @@
         // ============================================================
         function setupDragDrop() {
             // Click to upload
-            uploadZone.addEventListener('click', () => fileInput.click());
-            fileInput.addEventListener('change', (e) => {
-                if (e.target.files.length) handleFile(e.target.files[0]);
+            uploadZone.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.jpg,.jpeg,.png,.svg';
+                input.onchange = (e) => {
+                    if (e.target.files.length) handleFile(e.target.files[0]);
+                };
+                input.click();
             });
 
             // Drag & drop on wrapper
-            const wrapper = $('canvasWrapper');
-            wrapper.addEventListener('dragover', (e) => {
+            const wrapperEl = $('canvasWrapper');
+            wrapperEl.addEventListener('dragover', (e) => {
                 e.preventDefault();
                 uploadZone.classList.add('dragover');
             });
-            wrapper.addEventListener('dragleave', () => {
+            wrapperEl.addEventListener('dragleave', () => {
                 uploadZone.classList.remove('dragover');
             });
-            wrapper.addEventListener('drop', (e) => {
+            wrapperEl.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone.classList.remove('dragover');
+                if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+            });
+
+            // Also allow drop on the placeholder
+            placeholder.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone.classList.add('dragover');
+            });
+            placeholder.addEventListener('dragleave', () => {
+                uploadZone.classList.remove('dragover');
+            });
+            placeholder.addEventListener('drop', (e) => {
                 e.preventDefault();
                 uploadZone.classList.remove('dragover');
                 if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
@@ -1389,58 +1451,76 @@
                 const data = e.target.result;
                 loadImageToCanvas(data, file.name);
             };
+            reader.onerror = () => {
+                showToast('Failed to read file.', 'error');
+            };
             reader.readAsDataURL(file);
         }
 
         function loadImageToCanvas(dataUrl, name) {
+            if (!state.canvas || !state.isReady) {
+                showToast('Canvas not ready. Please wait.', 'error');
+                return;
+            }
+
             fabric.Image.fromURL(dataUrl, (img) => {
                 if (!img) {
-                    showToast('Failed to load image.', 'error');
+                    showToast('Failed to load image. Try a different file.', 'error');
                     return;
                 }
 
-                // Remove existing objects
-                state.canvas.clear();
-                state.canvas.backgroundColor = '#1a1a1a';
+                try {
+                    // Remove existing objects
+                    state.canvas.clear();
+                    state.canvas.backgroundColor = '#1a1a1a';
 
-                // Scale image to fit canvas
-                const cw = state.canvas.getWidth();
-                const ch = state.canvas.getHeight();
-                const scale = Math.min((cw - 40) / img.width, (ch - 40) / img.height, 1);
+                    const cw = state.canvas.getWidth();
+                    const ch = state.canvas.getHeight();
 
-                img.scale(scale);
-                img.set({
-                    left: (cw - img.width * scale) / 2,
-                    top: (ch - img.height * scale) / 2,
-                    selectable: true,
-                    hasControls: true,
-                });
+                    // Calculate scale to fit
+                    let scale = Math.min((cw - 60) / img.width, (ch - 60) / img.height, 1);
+                    scale = Math.max(scale, 0.1);
 
-                state.canvas.add(img);
-                state.canvas.setActiveObject(img);
-                state.canvas.renderAll();
+                    img.scale(scale);
+                    img.set({
+                        left: (cw - img.width * scale) / 2,
+                        top: (ch - img.height * scale) / 2,
+                        selectable: true,
+                        hasControls: true,
+                        hasBorders: true,
+                    });
 
-                state.currentImage = img;
-                state.originalImageData = img.toDataURL();
-                state.isLoaded = true;
+                    state.canvas.add(img);
+                    state.canvas.setActiveObject(img);
+                    state.canvas.renderAll();
 
-                // Hide placeholder
-                placeholder.style.display = 'none';
+                    state.currentImage = img;
+                    state.originalImageData = img.toDataURL('image/png');
+                    state.isLoaded = true;
 
-                // Update pattern name
-                if (name) {
-                    const base = name.replace(/\.[^.]+$/, '');
-                    $('patternName').value = base;
-                    state.patternName = base;
+                    // Hide placeholder
+                    placeholder.style.display = 'none';
+
+                    // Update pattern name
+                    if (name) {
+                        const base = name.replace(/\.[^.]+$/, '');
+                        $('patternName').value = base;
+                        state.patternName = base;
+                    }
+
+                    saveHistory();
+                    updateColorPalette();
+                    generateAIColors();
+                    showToast('Pattern loaded successfully!', 'success');
+                } catch (e) {
+                    console.error('Load image error:', e);
+                    showToast('Error loading image: ' + e.message, 'error');
                 }
-
-                saveHistory();
-                updateColorPalette();
-                showToast('Pattern loaded successfully!', 'success');
-
-                // Generate AI colors
-                generateAIColors();
-            }, { crossOrigin: 'anonymous' });
+            }, {
+                crossOrigin: 'anonymous',
+                // Handle SVG loading
+                crossOrigin: 'anonymous'
+            });
         }
 
         // ============================================================
@@ -1448,19 +1528,20 @@
         // ============================================================
         function updateColorPalette() {
             const grid = $('colorPaletteGrid');
+            if (!grid) return;
             grid.innerHTML = '';
-            // Extract colors from image if loaded
-            const colors = state.colors;
-            colors.forEach((c, i) => {
+
+            state.colors.forEach((c, i) => {
                 const swatch = document.createElement('div');
                 swatch.className = 'color-swatch' + (i === 0 ? ' active' : '');
                 swatch.style.background = c;
                 swatch.dataset.color = c;
                 swatch.innerHTML = i === 0 ? '<span class="check"><i class="fas fa-check"></i></span>' : '';
                 swatch.onclick = () => {
-                    document.querySelectorAll('.color-swatch').forEach(el => {
+                    document.querySelectorAll('#colorPaletteGrid .color-swatch').forEach(el => {
                         el.classList.remove('active');
-                        el.querySelector('.check')?.remove();
+                        const chk = el.querySelector('.check');
+                        if (chk) chk.remove();
                     });
                     swatch.classList.add('active');
                     const check = document.createElement('span');
@@ -1475,74 +1556,94 @@
         }
 
         // ============================================================
-        //  COLOR REPLACE
+        //  COLOR REPLACE (Pixel-based)
         // ============================================================
         function replaceColor(fromColor, toColor) {
-            if (!state.currentImage) {
+            if (!state.currentImage || !state.canvas) {
                 showToast('Please upload a pattern first.', 'error');
                 return;
             }
 
-            // Use canvas filter or manual pixel manipulation
-            // For simplicity, we'll use fabric's filter system
             const img = state.currentImage;
             const canvas = state.canvas;
 
-            // Create a temporary canvas to manipulate pixels
+            // Get the image data as a canvas
             const tempCanvas = document.createElement('canvas');
             const ctx = tempCanvas.getContext('2d');
-            const w = img.width;
-            const h = img.height;
-            tempCanvas.width = w;
-            tempCanvas.height = h;
+            const w = Math.round(img.width * img.scaleX);
+            const h = Math.round(img.height * img.scaleY);
+            tempCanvas.width = w || 100;
+            tempCanvas.height = h || 100;
 
-            // Draw original image
+            // Draw the image at full resolution
             const origData = img.toDataURL('image/png');
             const tempImg = new Image();
+            tempImg.crossOrigin = 'anonymous';
+
             tempImg.onload = () => {
-                ctx.drawImage(tempImg, 0, 0, w, h);
-                const imageData = ctx.getImageData(0, 0, w, h);
-                const data = imageData.data;
+                try {
+                    ctx.drawImage(tempImg, 0, 0, tempCanvas.width, tempCanvas.height);
+                    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                    const data = imageData.data;
 
-                // Parse colors
-                const from = hexToRgb(fromColor);
-                const to = hexToRgb(toColor);
+                    const from = hexToRgb(fromColor);
+                    const to = hexToRgb(toColor);
+                    const threshold = 40;
 
-                // Replace with threshold
-                const threshold = 30;
-                for (let i = 0; i < data.length; i += 4) {
-                    const r = data[i],
-                        g = data[i + 1],
-                        b = data[i + 2];
-                    const dist = Math.sqrt(
-                        Math.pow(r - from.r, 2) +
-                        Math.pow(g - from.g, 2) +
-                        Math.pow(b - from.b, 2)
-                    );
-                    if (dist < threshold) {
-                        data[i] = to.r;
-                        data[i + 1] = to.g;
-                        data[i + 2] = to.b;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i],
+                            g = data[i + 1],
+                            b = data[i + 2];
+                        const dist = Math.sqrt(
+                            Math.pow(r - from.r, 2) +
+                            Math.pow(g - from.g, 2) +
+                            Math.pow(b - from.b, 2)
+                        );
+                        if (dist < threshold) {
+                            data[i] = to.r;
+                            data[i + 1] = to.g;
+                            data[i + 2] = to.b;
+                        }
                     }
-                }
-                ctx.putImageData(imageData, 0, 0);
+                    ctx.putImageData(imageData, 0, 0);
 
-                // Load back to fabric
-                const newDataUrl = tempCanvas.toDataURL('image/png');
-                fabric.Image.fromURL(newDataUrl, (newImg) => {
-                    const scale = img.scaleX || 1;
-                    const left = img.left;
-                    const top = img.top;
-                    canvas.remove(img);
-                    newImg.scale(scale);
-                    newImg.set({ left, top, selectable: true, hasControls: true });
-                    canvas.add(newImg);
-                    canvas.setActiveObject(newImg);
-                    canvas.renderAll();
-                    state.currentImage = newImg;
-                    saveHistory();
-                    showToast(`Replaced ${fromColor} → ${toColor}`, 'success');
-                });
+                    const newDataUrl = tempCanvas.toDataURL('image/png');
+                    fabric.Image.fromURL(newDataUrl, (newImg) => {
+                        if (!newImg) {
+                            showToast('Failed to process image.', 'error');
+                            return;
+                        }
+                        const scaleX = img.scaleX || 1;
+                        const scaleY = img.scaleY || 1;
+                        const left = img.left || 0;
+                        const top = img.top || 0;
+                        const angle = img.angle || 0;
+
+                        canvas.remove(img);
+                        newImg.scaleX = scaleX;
+                        newImg.scaleY = scaleY;
+                        newImg.set({
+                            left: left,
+                            top: top,
+                            angle: angle,
+                            selectable: true,
+                            hasControls: true,
+                            hasBorders: true,
+                        });
+                        canvas.add(newImg);
+                        canvas.setActiveObject(newImg);
+                        canvas.renderAll();
+                        state.currentImage = newImg;
+                        saveHistory();
+                        showToast(`Replaced ${fromColor} → ${toColor}`, 'success');
+                    }, { crossOrigin: 'anonymous' });
+                } catch (e) {
+                    console.error('Replace color error:', e);
+                    showToast('Error replacing color: ' + e.message, 'error');
+                }
+            };
+            tempImg.onerror = () => {
+                showToast('Failed to load image data for color replacement.', 'error');
             };
             tempImg.src = origData;
         }
@@ -1561,6 +1662,7 @@
         // ============================================================
         function generateAIColors() {
             const grid = $('aiColorGrid');
+            if (!grid) return;
             grid.innerHTML = '';
 
             const palettes = [
@@ -1590,10 +1692,10 @@
         }
 
         // ============================================================
-        //  REPEAT PATTERN GENERATOR
+        //  REPEAT PATTERN GENERATOR (Fixed)
         // ============================================================
         function generateRepeat(mode) {
-            if (!state.currentImage) {
+            if (!state.currentImage || !state.canvas) {
                 showToast('Please upload a pattern first.', 'error');
                 return;
             }
@@ -1601,31 +1703,43 @@
             state.repeatMode = mode;
             const img = state.currentImage;
             const canvas = state.canvas;
+
+            // Get image dimensions in canvas space
+            const w = Math.round(img.width * img.scaleX);
+            const h = Math.round(img.height * img.scaleY);
+            if (w < 5 || h < 5) {
+                showToast('Pattern too small for repeat.', 'error');
+                return;
+            }
+
             const cw = canvas.getWidth();
             const ch = canvas.getHeight();
 
-            // Get image dimensions
-            const w = img.width * img.scaleX;
-            const h = img.height * img.scaleY;
+            // Get the image data as a data URL
+            const imgDataUrl = img.toDataURL('image/png');
 
-            // Clear and re-add with repeat
+            // Clear canvas
             canvas.clear();
             canvas.backgroundColor = '#1a1a1a';
 
-            const cols = Math.ceil(cw / w) + 2;
-            const rows = Math.ceil(ch / h) + 2;
+            // Calculate grid
+            const cols = Math.ceil(cw / w) + 3;
+            const rows = Math.ceil(ch / h) + 3;
 
             let offsetX = 0,
                 offsetY = 0;
             if (mode === 'half-drop') offsetX = w / 2;
-            else if (mode === 'mirror') { /* handled per tile */ } else if (mode === 'brick') offsetY = h / 2;
+            else if (mode === 'brick') offsetY = h / 2;
             else if (mode === 'diamond') { offsetX = w / 2;
                 offsetY = h / 2; }
 
+            let loadedCount = 0;
+            const totalTiles = cols * rows;
+
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
-                    let x = c * w - w / 2;
-                    let y = r * h - h / 2;
+                    let x = c * w - w;
+                    let y = r * h - h;
 
                     if (mode === 'half-drop' && r % 2 === 1) x += w / 2;
                     if (mode === 'brick' && c % 2 === 1) y += h / 2;
@@ -1634,7 +1748,6 @@
                             y += h / 2; }
                     }
 
-                    // Mirror
                     let scaleX = 1,
                         scaleY = 1;
                     if (mode === 'mirror') {
@@ -1642,31 +1755,49 @@
                         if (r % 2 === 1) scaleY = -1;
                     }
 
-                    fabric.Image.fromURL(img.toDataURL('image/png'), (clone) => {
-                        clone.scale(img.scaleX);
-                        if (scaleX === -1) clone.flipX = true;
-                        if (scaleY === -1) clone.flipY = true;
+                    // Use fabric.Image.fromURL with the data URL
+                    fabric.Image.fromURL(imgDataUrl, (clone) => {
+                        if (!clone) return;
+                        const sX = img.scaleX || 1;
+                        const sY = img.scaleY || 1;
+                        clone.scaleX = sX * (scaleX === -1 ? -1 : 1);
+                        clone.scaleY = sY * (scaleY === -1 ? -1 : 1);
                         clone.set({
                             left: x + (scaleX === -1 ? w : 0),
                             top: y + (scaleY === -1 ? h : 0),
                             selectable: false,
                             evented: false,
+                            hasControls: false,
+                            hasBorders: false,
+                            originX: 'left',
+                            originY: 'top',
                         });
                         canvas.add(clone);
-                    });
+                        loadedCount++;
+                        if (loadedCount === totalTiles) {
+                            canvas.renderAll();
+                            saveHistory();
+                            showToast(`Repeat pattern: ${mode} applied!`, 'success');
+                        }
+                    }, { crossOrigin: 'anonymous' });
                 }
             }
 
-            canvas.renderAll();
-            saveHistory();
-            showToast(`Repeat pattern: ${mode} applied!`, 'success');
+            // Fallback: if no images loaded after timeout, render what we have
+            setTimeout(() => {
+                if (loadedCount < totalTiles) {
+                    canvas.renderAll();
+                    saveHistory();
+                    showToast(`Repeat pattern: ${mode} applied (partial).`, 'info');
+                }
+            }, 2000);
         }
 
         // ============================================================
-        //  TEMPLATE RENDER
+        //  TEMPLATE RENDER (Fixed)
         // ============================================================
         function renderTemplate(type) {
-            if (!state.currentImage) {
+            if (!state.currentImage || !state.canvas) {
                 showToast('Please upload a pattern first.', 'error');
                 return;
             }
@@ -1677,40 +1808,40 @@
             const cw = canvas.getWidth();
             const ch = canvas.getHeight();
 
-            // Clear and show template preview
             canvas.clear();
             canvas.backgroundColor = '#1a1a1a';
 
-            // Draw a simple template visualization
             const colors = ['#c8a85e', '#d4b87a', '#8b7a4a', '#f0e0b8'];
+
+            // Draw template shapes based on type
             const rects = [];
+            const labels = [];
 
             if (type === 'saree') {
-                // Saree body with border and pallu
                 rects.push({ x: 50, y: 50, w: cw - 100, h: ch - 100, fill: colors[0], label: 'Body' });
-                rects.push({ x: 50, y: 50, w: 20, h: ch - 100, fill: colors[1], label: 'Border' });
-                rects.push({ x: cw - 70, y: 50, w: 20, h: ch - 100, fill: colors[1], label: 'Border' });
-                rects.push({ x: 50, y: ch - 70, w: cw - 100, h: 20, fill: colors[2], label: 'Pallu' });
+                rects.push({ x: 50, y: 50, w: 25, h: ch - 100, fill: colors[1], label: 'Border' });
+                rects.push({ x: cw - 75, y: 50, w: 25, h: ch - 100, fill: colors[1], label: 'Border' });
+                rects.push({ x: 50, y: ch - 75, w: cw - 100, h: 25, fill: colors[2], label: 'Pallu' });
             } else if (type === 'sarong') {
                 rects.push({ x: 50, y: 50, w: cw - 100, h: ch - 100, fill: colors[0], label: 'Sarong' });
-                rects.push({ x: 50, y: 50, w: cw - 100, h: 30, fill: colors[1], label: 'Waistband' });
-                rects.push({ x: 50, y: ch - 80, w: cw - 100, h: 30, fill: colors[2], label: 'Border' });
+                rects.push({ x: 50, y: 50, w: cw - 100, h: 35, fill: colors[1], label: 'Waistband' });
+                rects.push({ x: 50, y: ch - 85, w: cw - 100, h: 35, fill: colors[2], label: 'Border' });
             } else if (type === 'shawl') {
                 rects.push({ x: 80, y: 80, w: cw - 160, h: ch - 160, fill: colors[0], label: 'Shawl' });
-                rects.push({ x: 80, y: 80, w: cw - 160, h: 20, fill: colors[1], label: 'Border' });
-                rects.push({ x: 80, y: ch - 180, w: cw - 160, h: 100, fill: colors[2], label: 'Fringe' });
+                rects.push({ x: 80, y: 80, w: cw - 160, h: 25, fill: colors[1], label: 'Border' });
+                rects.push({ x: 80, y: ch - 185, w: cw - 160, h: 105, fill: colors[2], label: 'Fringe' });
             } else if (type === 'dress') {
-                rects.push({ x: cw / 2 - 80, y: 60, w: 160, h: 200, fill: colors[0], label: 'Dress' });
-                rects.push({ x: cw / 2 - 80, y: 60, w: 160, h: 30, fill: colors[1], label: 'Neck' });
-                rects.push({ x: cw / 2 - 80, y: 260, w: 160, h: 40, fill: colors[2], label: 'Hem' });
+                rects.push({ x: cw / 2 - 90, y: 60, w: 180, h: 220, fill: colors[0], label: 'Dress' });
+                rects.push({ x: cw / 2 - 90, y: 60, w: 180, h: 35, fill: colors[1], label: 'Neck' });
+                rects.push({ x: cw / 2 - 90, y: 280, w: 180, h: 45, fill: colors[2], label: 'Hem' });
             } else if (type === 'bedsheet') {
                 rects.push({ x: 40, y: 40, w: cw - 80, h: ch - 80, fill: colors[0], label: 'Bed Sheet' });
-                rects.push({ x: 40, y: 40, w: cw - 80, h: 25, fill: colors[1], label: 'Border' });
-                rects.push({ x: 40, y: ch - 65, w: cw - 80, h: 25, fill: colors[1], label: 'Border' });
+                rects.push({ x: 40, y: 40, w: cw - 80, h: 30, fill: colors[1], label: 'Border' });
+                rects.push({ x: 40, y: ch - 70, w: cw - 80, h: 30, fill: colors[1], label: 'Border' });
             } else if (type === 'curtain') {
                 rects.push({ x: 40, y: 40, w: cw - 80, h: ch - 80, fill: colors[0], label: 'Curtain' });
-                rects.push({ x: 40, y: 40, w: 20, h: ch - 80, fill: colors[1], label: 'Edge' });
-                rects.push({ x: cw - 60, y: 40, w: 20, h: ch - 80, fill: colors[1], label: 'Edge' });
+                rects.push({ x: 40, y: 40, w: 25, h: ch - 80, fill: colors[1], label: 'Edge' });
+                rects.push({ x: cw - 65, y: 40, w: 25, h: ch - 80, fill: colors[1], label: 'Edge' });
             }
 
             // Draw rects
@@ -1724,10 +1855,11 @@
                     opacity: 0.85,
                     stroke: '#333',
                     strokeWidth: 1,
+                    selectable: false,
+                    evented: false,
                 });
                 canvas.add(rect);
 
-                // Add label
                 const label = new fabric.Text(r.label, {
                     left: r.x + 10,
                     top: r.y + 10,
@@ -1735,75 +1867,194 @@
                     fill: '#fff',
                     fontFamily: 'Inter',
                     fontWeight: 600,
+                    selectable: false,
+                    evented: false,
                 });
                 canvas.add(label);
             });
 
             // Add pattern image on top
+            const imgDataUrl = img.toDataURL('image/png');
             const scale = Math.min(
-                (cw - 160) / img.width,
-                (ch - 160) / img.height,
-                0.6
+                (cw - 180) / (img.width * img.scaleX || 100),
+                (ch - 180) / (img.height * img.scaleY || 100),
+                0.7
             );
-            fabric.Image.fromURL(img.toDataURL('image/png'), (clone) => {
-                clone.scale(scale);
+
+            fabric.Image.fromURL(imgDataUrl, (clone) => {
+                if (!clone) {
+                    canvas.renderAll();
+                    showToast(`Template: ${type} rendered (without pattern).`, 'info');
+                    return;
+                }
+                const s = Math.max(scale, 0.1);
+                clone.scaleX = s;
+                clone.scaleY = s;
                 clone.set({
-                    left: (cw - img.width * scale) / 2,
-                    top: (ch - img.height * scale) / 2,
+                    left: (cw - (img.width * s)) / 2,
+                    top: (ch - (img.height * s)) / 2,
                     selectable: false,
                     evented: false,
-                    opacity: 0.7,
+                    opacity: 0.75,
                 });
                 canvas.add(clone);
                 canvas.renderAll();
-            });
+                showToast(`Template: ${type} rendered!`, 'success');
+            }, { crossOrigin: 'anonymous' });
 
-            canvas.renderAll();
-            showToast(`Template: ${type} rendered!`, 'success');
+            // If image loading takes too long, still render
+            setTimeout(() => {
+                canvas.renderAll();
+            }, 1000);
         }
 
         // ============================================================
         //  HISTORY (Undo/Redo)
         // ============================================================
         function saveHistory() {
-            if (!state.canvas) return;
-            const data = state.canvas.toJSON();
-            // Limit history
-            while (state.history.length > state.maxHistory) {
-                state.history.shift();
+            if (!state.canvas || !state.isReady) return;
+            try {
+                const data = state.canvas.toJSON();
+                while (state.history.length > state.maxHistory) {
+                    state.history.shift();
+                }
+                // Avoid duplicate identical entries
+                if (state.history.length > 0) {
+                    const last = state.history[state.history.length - 1];
+                    if (JSON.stringify(last) === JSON.stringify(data)) {
+                        return;
+                    }
+                }
+                state.history.push(data);
+                state.historyIndex = state.history.length - 1;
+            } catch (e) {
+                console.warn('Save history error:', e);
             }
-            state.history.push(data);
-            state.historyIndex = state.history.length - 1;
         }
 
         function undo() {
+            if (!state.canvas || !state.isReady) return;
             if (state.historyIndex > 0) {
                 state.historyIndex--;
                 restoreHistory(state.history[state.historyIndex]);
-                showToast('Undo', 'info');
+                showToast('Undo', 'info', 1500);
+            } else {
+                showToast('Nothing to undo', 'info', 1500);
             }
         }
 
         function redo() {
+            if (!state.canvas || !state.isReady) return;
             if (state.historyIndex < state.history.length - 1) {
                 state.historyIndex++;
                 restoreHistory(state.history[state.historyIndex]);
-                showToast('Redo', 'info');
+                showToast('Redo', 'info', 1500);
+            } else {
+                showToast('Nothing to redo', 'info', 1500);
             }
         }
 
         function restoreHistory(data) {
-            state.canvas.loadFromJSON(data, () => {
-                state.canvas.renderAll();
-                // Re-link currentImage
-                const objs = state.canvas.getObjects();
-                for (const obj of objs) {
-                    if (obj.type === 'image') {
-                        state.currentImage = obj;
-                        break;
+            if (!state.canvas || !state.isReady) return;
+            try {
+                state.canvas.loadFromJSON(data, () => {
+                    state.canvas.renderAll();
+                    // Re-link currentImage
+                    const objs = state.canvas.getObjects();
+                    for (const obj of objs) {
+                        if (obj.type === 'image') {
+                            state.currentImage = obj;
+                            state.isLoaded = true;
+                            placeholder.style.display = 'none';
+                            break;
+                        }
                     }
+                    updateZoomDisplay();
+                });
+            } catch (e) {
+                console.warn('Restore history error:', e);
+            }
+        }
+
+        // ============================================================
+        //  REMOVE BACKGROUND
+        // ============================================================
+        function removeBackground() {
+            if (!state.currentImage || !state.canvas) {
+                showToast('Please upload a pattern first.', 'error');
+                return;
+            }
+
+            const img = state.currentImage;
+            const canvas = state.canvas;
+
+            const tempCanvas = document.createElement('canvas');
+            const ctx = tempCanvas.getContext('2d');
+            const w = Math.round(img.width * img.scaleX);
+            const h = Math.round(img.height * img.scaleY);
+            tempCanvas.width = w || 100;
+            tempCanvas.height = h || 100;
+
+            const origData = img.toDataURL('image/png');
+            const tempImg = new Image();
+            tempImg.crossOrigin = 'anonymous';
+
+            tempImg.onload = () => {
+                try {
+                    ctx.drawImage(tempImg, 0, 0, tempCanvas.width, tempCanvas.height);
+                    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                    const data = imageData.data;
+
+                    // Make white/light pixels transparent
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i],
+                            g = data[i + 1],
+                            b = data[i + 2];
+                        if (r > 200 && g > 200 && b > 200) {
+                            data[i + 3] = 0;
+                        }
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+
+                    const newDataUrl = tempCanvas.toDataURL('image/png');
+                    fabric.Image.fromURL(newDataUrl, (newImg) => {
+                        if (!newImg) {
+                            showToast('Failed to process background removal.', 'error');
+                            return;
+                        }
+                        const scaleX = img.scaleX || 1;
+                        const scaleY = img.scaleY || 1;
+                        const left = img.left || 0;
+                        const top = img.top || 0;
+                        const angle = img.angle || 0;
+
+                        canvas.remove(img);
+                        newImg.scaleX = scaleX;
+                        newImg.scaleY = scaleY;
+                        newImg.set({
+                            left: left,
+                            top: top,
+                            angle: angle,
+                            selectable: true,
+                            hasControls: true,
+                            hasBorders: true,
+                        });
+                        canvas.add(newImg);
+                        canvas.setActiveObject(newImg);
+                        canvas.renderAll();
+                        state.currentImage = newImg;
+                        saveHistory();
+                        showToast('Background removed!', 'success');
+                    }, { crossOrigin: 'anonymous' });
+                } catch (e) {
+                    console.error('Remove background error:', e);
+                    showToast('Error removing background: ' + e.message, 'error');
                 }
-            });
+            };
+            tempImg.onerror = () => {
+                showToast('Failed to load image for background removal.', 'error');
+            };
+            tempImg.src = origData;
         }
 
         // ============================================================
@@ -1815,25 +2066,31 @@
                 return;
             }
 
-            const canvas = state.canvas;
-            let dataUrl;
+            try {
+                let dataUrl;
+                if (format === 'png') {
+                    dataUrl = state.canvas.toDataURL('image/png');
+                } else if (format === 'jpg') {
+                    dataUrl = state.canvas.toDataURL('image/jpeg', 0.95);
+                } else if (format === 'svg') {
+                    dataUrl = 'data:image/svg+xml;charset=utf-8,' +
+                        encodeURIComponent(state.canvas.toSVG());
+                } else {
+                    dataUrl = state.canvas.toDataURL('image/png');
+                }
 
-            if (format === 'png') {
-                dataUrl = canvas.toDataURL('image/png');
-            } else if (format === 'jpg') {
-                dataUrl = canvas.toDataURL('image/jpeg', 0.95);
-            } else if (format === 'svg') {
-                dataUrl = 'data:image/svg+xml;charset=utf-8,' +
-                    encodeURIComponent(canvas.toSVG());
-            } else {
-                dataUrl = canvas.toDataURL('image/png');
+                const link = document.createElement('a');
+                const ext = format === 'jpg' ? 'jpg' : format === 'svg' ? 'svg' : 'png';
+                link.download = `${state.patternName || 'design'}.${ext}`;
+                link.href = dataUrl;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                showToast(`Exported as ${format.toUpperCase()}`, 'success');
+            } catch (e) {
+                console.error('Export error:', e);
+                showToast('Export failed: ' + e.message, 'error');
             }
-
-            const link = document.createElement('a');
-            link.download = `${state.patternName || 'design'}.${format === 'jpg' ? 'jpg' : format === 'svg' ? 'svg' : 'png'}`;
-            link.href = dataUrl;
-            link.click();
-            showToast(`Exported as ${format.toUpperCase()}`, 'success');
         }
 
         // ============================================================
@@ -1843,16 +2100,15 @@
             // Sidebar nav
             document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
                 item.addEventListener('click', () => {
-                    document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove('active'));
+                    document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove(
+                    'active'));
                     item.classList.add('active');
-                    const tab = item.dataset.tab;
-                    state.activeTab = tab;
-                    // Close sidebar on mobile
+                    state.activeTab = item.dataset.tab;
                     if (window.innerWidth <= 992) {
                         sidebar.classList.remove('open');
                         mobileOverlay.classList.remove('open');
                     }
-                    showToast(`Switched to ${tab}`, 'info', 1500);
+                    showToast(`Switched to ${item.dataset.tab}`, 'info', 1500);
                 });
             });
 
@@ -1903,6 +2159,8 @@
                     state.canvas.renderAll();
                     saveHistory();
                     showToast('Flipped horizontally', 'info');
+                } else {
+                    showToast('Upload a pattern first.', 'error');
                 }
             };
             $('flipVBtn').onclick = () => {
@@ -1911,86 +2169,52 @@
                     state.canvas.renderAll();
                     saveHistory();
                     showToast('Flipped vertically', 'info');
+                } else {
+                    showToast('Upload a pattern first.', 'error');
                 }
             };
 
             // Rotate
             $('rotateBtn').onclick = () => {
                 if (state.currentImage) {
-                    state.currentImage.rotate((state.currentImage.angle || 0) + 90);
+                    const angle = (state.currentImage.angle || 0) + 90;
+                    state.currentImage.rotate(angle);
                     state.canvas.renderAll();
                     saveHistory();
                     showToast('Rotated 90°', 'info');
+                } else {
+                    showToast('Upload a pattern first.', 'error');
                 }
             };
 
             // Remove BG
-            $('removeBgBtn').onclick = () => {
-                if (!state.currentImage) {
-                    showToast('Upload a pattern first.', 'error');
-                    return;
-                }
-                // Simple: make background transparent (white→transparent)
-                const img = state.currentImage;
-                const dataUrl = img.toDataURL('image/png');
-                const tempCanvas = document.createElement('canvas');
-                const ctx = tempCanvas.getContext('2d');
-                const w = img.width;
-                const h = img.height;
-                tempCanvas.width = w;
-                tempCanvas.height = h;
+            $('removeBgBtn').onclick = removeBackground;
 
-                const tempImg = new Image();
-                tempImg.onload = () => {
-                    ctx.drawImage(tempImg, 0, 0, w, h);
-                    const imageData = ctx.getImageData(0, 0, w, h);
-                    const data = imageData.data;
-                    // Make white/light pixels transparent
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i],
-                            g = data[i + 1],
-                            b = data[i + 2];
-                        if (r > 200 && g > 200 && b > 200) {
-                            data[i + 3] = 0;
-                        }
-                    }
-                    ctx.putImageData(imageData, 0, 0);
-                    const newDataUrl = tempCanvas.toDataURL('image/png');
-                    fabric.Image.fromURL(newDataUrl, (newImg) => {
-                        const scale = img.scaleX || 1;
-                        const left = img.left;
-                        const top = img.top;
-                        state.canvas.remove(img);
-                        newImg.scale(scale);
-                        newImg.set({ left, top, selectable: true, hasControls: true });
-                        state.canvas.add(newImg);
-                        state.canvas.setActiveObject(newImg);
-                        state.canvas.renderAll();
-                        state.currentImage = newImg;
-                        saveHistory();
-                        showToast('Background removed!', 'success');
-                    });
-                };
-                tempImg.src = dataUrl;
-            };
-
-            // Smooth
+            // Smooth (placeholder)
             $('smoothBtn').onclick = () => {
                 if (state.currentImage) {
-                    // Simple: re-apply with slight blur
-                    showToast('Edges smoothed!', 'success');
+                    showToast('Edges smoothed! (feature in development)', 'info');
+                } else {
+                    showToast('Upload a pattern first.', 'error');
                 }
             };
 
             // Apply size
             $('applySizeBtn').onclick = () => {
+                if (!state.currentImage) {
+                    showToast('Upload a pattern first.', 'error');
+                    return;
+                }
                 const w = parseInt($('patternWidth').value) || 800;
                 const h = parseInt($('patternHeight').value) || 800;
-                if (state.currentImage) {
-                    const scaleX = w / (state.currentImage.width * state.currentImage.scaleX);
-                    const scaleY = h / (state.currentImage.height * state.currentImage.scaleY);
-                    state.currentImage.scaleX = state.currentImage.scaleX * scaleX;
-                    state.currentImage.scaleY = state.currentImage.scaleY * scaleY;
+                const img = state.currentImage;
+                const currentW = img.width * img.scaleX;
+                const currentH = img.height * img.scaleY;
+                if (currentW > 0 && currentH > 0) {
+                    const scaleX = w / currentW;
+                    const scaleY = h / currentH;
+                    img.scaleX = img.scaleX * scaleX;
+                    img.scaleY = img.scaleY * scaleY;
                     state.canvas.renderAll();
                     saveHistory();
                     showToast(`Resized to ${w}×${h}`, 'success');
@@ -2011,21 +2235,25 @@
                     state.colors.push(c);
                     updateColorPalette();
                     showToast(`Added ${c}`, 'info');
+                } else {
+                    showToast('Color already in palette.', 'info');
                 }
             };
 
-            // Replace color button (palette)
+            // Replace color in palette
             $('replaceColorBtn').onclick = () => {
                 const c = $('customColorPicker').value;
                 state.selectedColor = c;
-                // Find active swatch and replace
-                const active = document.querySelector('.color-swatch.active');
+                const active = document.querySelector('#colorPaletteGrid .color-swatch.active');
                 if (active) {
-                    active.style.background = c;
-                    active.dataset.color = c;
-                    const idx = state.colors.indexOf(active.dataset.color);
-                    if (idx > -1) state.colors[idx] = c;
-                    showToast(`Updated color to ${c}`, 'info');
+                    const idx = Array.from(document.querySelectorAll('#colorPaletteGrid .color-swatch')).indexOf(active);
+                    if (idx > -1 && idx < state.colors.length) {
+                        state.colors[idx] = c;
+                        updateColorPalette();
+                        showToast(`Updated color to ${c}`, 'info');
+                    }
+                } else {
+                    showToast('Select a color in the palette first.', 'error');
                 }
             };
 
@@ -2046,26 +2274,26 @@
                         kids: ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0'],
                     };
                     const colors = palettes[lib] || palettes.batik;
-                    // Replace color palette
                     state.colors = colors;
                     updateColorPalette();
-                    // Show in library grid
                     const grid = $('libraryColorGrid');
-                    grid.innerHTML = '';
-                    colors.forEach(c => {
-                        const sw = document.createElement('div');
-                        sw.className = 'color-swatch';
-                        sw.style.background = c;
-                        sw.style.aspectRatio = '1';
-                        sw.style.borderRadius = 'var(--radius-sm)';
-                        sw.style.cursor = 'pointer';
-                        sw.style.border = '2px solid transparent';
-                        sw.onclick = () => {
-                            $('replaceToColor').value = c;
-                            showToast(`Selected ${c}`, 'info');
-                        };
-                        grid.appendChild(sw);
-                    });
+                    if (grid) {
+                        grid.innerHTML = '';
+                        colors.forEach(c => {
+                            const sw = document.createElement('div');
+                            sw.className = 'color-swatch';
+                            sw.style.background = c;
+                            sw.style.aspectRatio = '1';
+                            sw.style.borderRadius = 'var(--radius-sm)';
+                            sw.style.cursor = 'pointer';
+                            sw.style.border = '2px solid transparent';
+                            sw.onclick = () => {
+                                $('replaceToColor').value = c;
+                                showToast(`Selected ${c}`, 'info');
+                            };
+                            grid.appendChild(sw);
+                        });
+                    }
                     showToast(`Loaded ${lib} palette`, 'success');
                 };
             });
@@ -2074,7 +2302,7 @@
             document.querySelectorAll('.repeat-preview .rp-item').forEach(item => {
                 item.onclick = () => {
                     document.querySelectorAll('.repeat-preview .rp-item').forEach(el => el.classList.remove(
-                    'active'));
+                        'active'));
                     item.classList.add('active');
                     const mode = item.dataset.mode;
                     generateRepeat(mode);
@@ -2116,7 +2344,6 @@
             $('applyToFabricBtn').onclick = () => {
                 if (state.currentImage) {
                     showToast(`Applied pattern to ${state.fabricType} fabric!`, 'success');
-                    // Visual feedback: change background
                     state.canvas.backgroundColor = '#2a2a2a';
                     state.canvas.renderAll();
                 } else {
@@ -2126,48 +2353,65 @@
 
             // Export
             $('exportBtn').onclick = () => {
-                showModal('Export Design', 'Choose export format:', () => {
-                    // Simple: show export options
-                    const formats = ['png', 'jpg', 'svg'];
-                    formats.forEach(f => {
-                        const btn = document.createElement('button');
-                        btn.textContent = f.toUpperCase();
-                        btn.style.margin = '4px';
-                        btn.style.padding = '8px 16px';
-                        btn.style.background = 'var(--accent-dim)';
-                        btn.style.border = '1px solid var(--accent)';
-                        btn.style.borderRadius = 'var(--radius-sm)';
-                        btn.style.color = 'var(--accent)';
-                        btn.style.cursor = 'pointer';
-                        btn.onclick = () => {
-                            exportFile(f);
-                            modalOverlay.classList.remove('open');
-                        };
-                        document.querySelector('.modal .modal-actions').appendChild(btn);
-                    });
+                if (!state.currentImage) {
+                    showToast('Upload a pattern first.', 'error');
+                    return;
+                }
+                // Simple export dropdown via modal
+                showModal('Export Design', 'Choose export format:', () => {});
+                const actions = document.querySelector('.modal .modal-actions');
+                // Clear previous extra buttons
+                const existing = actions.querySelectorAll('.export-format-btn');
+                existing.forEach(el => el.remove());
+
+                const formats = ['png', 'jpg', 'svg'];
+                formats.forEach(f => {
+                    const btn = document.createElement('button');
+                    btn.className = 'export-format-btn';
+                    btn.textContent = f.toUpperCase();
+                    btn.style.cssText =
+                        'flex:1;padding:8px;border:none;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);cursor:pointer;font-weight:600;';
+                    btn.onclick = () => {
+                        exportFile(f);
+                        modalOverlay.classList.remove('open');
+                    };
+                    actions.appendChild(btn);
                 });
+                // Move confirm/cancel to end
+                const confirmBtn = $('modalConfirm');
+                const cancelBtn = $('modalCancel');
+                actions.appendChild(cancelBtn);
+                actions.appendChild(confirmBtn);
             };
 
             // New project
             $('newProjectBtn').onclick = () => {
                 showModal('New Project', 'This will clear the current design. Continue?', () => {
-                    state.canvas.clear();
-                    state.canvas.backgroundColor = '#1a1a1a';
-                    state.currentImage = null;
-                    state.isLoaded = false;
-                    placeholder.style.display = 'flex';
-                    state.canvas.renderAll();
-                    showToast('New project created', 'success');
+                    if (state.canvas) {
+                        state.canvas.clear();
+                        state.canvas.backgroundColor = '#1a1a1a';
+                        state.currentImage = null;
+                        state.isLoaded = false;
+                        placeholder.style.display = 'flex';
+                        state.canvas.renderAll();
+                        state.history = [];
+                        state.historyIndex = -1;
+                        showToast('New project created', 'success');
+                    }
                 });
             };
 
             // Save project
             $('saveProjectBtn').onclick = () => {
-                if (state.currentImage) {
-                    const data = state.canvas.toJSON();
-                    localStorage.setItem('batik_project', JSON.stringify(data));
-                    localStorage.setItem('batik_project_name', $('patternName').value);
-                    showToast('Project saved locally!', 'success');
+                if (state.currentImage && state.canvas) {
+                    try {
+                        const data = state.canvas.toJSON();
+                        localStorage.setItem('batik_project', JSON.stringify(data));
+                        localStorage.setItem('batik_project_name', $('patternName').value);
+                        showToast('Project saved locally!', 'success');
+                    } catch (e) {
+                        showToast('Save failed: ' + e.message, 'error');
+                    }
                 } else {
                     showToast('No design to save.', 'error');
                 }
@@ -2176,7 +2420,7 @@
             // Publish
             $('publishBtn').onclick = () => {
                 if (state.currentImage) {
-                    showToast('✨ Published to gallery!', 'success');
+                    showToast('✨ Published to gallery! (demo)', 'success');
                 } else {
                     showToast('Upload a pattern first.', 'error');
                 }
@@ -2192,36 +2436,72 @@
         //  INIT
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
-            initCanvas();
-            setupNavigation();
-            bindEvents();
-            updateColorPalette();
-            generateAIColors();
+            try {
+                initCanvas();
 
-            // Load saved project
-            const saved = localStorage.getItem('batik_project');
-            if (saved) {
-                try {
-                    const data = JSON.parse(saved);
-                    state.canvas.loadFromJSON(data, () => {
-                        state.canvas.renderAll();
-                        const objs = state.canvas.getObjects();
-                        for (const obj of objs) {
-                            if (obj.type === 'image') {
-                                state.currentImage = obj;
-                                state.isLoaded = true;
-                                placeholder.style.display = 'none';
-                                break;
-                            }
+                // Wait for canvas to be ready then setup rest
+                const checkReady = setInterval(() => {
+                    if (state.isReady) {
+                        clearInterval(checkReady);
+                        setupNavigation();
+                        bindEvents();
+                        updateColorPalette();
+                        generateAIColors();
+
+                        // Initialize fabric swatch
+                        const swatch = $('fabricSwatch');
+                        if (swatch) {
+                            swatch.style.background =
+                            'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 10px, #333 10px, #333 20px)';
                         }
-                        showToast('Restored saved project', 'info');
-                    });
-                    const name = localStorage.getItem('batik_project_name');
-                    if (name) $('patternName').value = name;
-                } catch (e) { /* ignore */ }
-            }
 
-            console.log('🎨 Batik Fabric Design Studio loaded.');
+                        // Load saved project
+                        const saved = localStorage.getItem('batik_project');
+                        if (saved && state.canvas) {
+                            try {
+                                const data = JSON.parse(saved);
+                                state.canvas.loadFromJSON(data, () => {
+                                    state.canvas.renderAll();
+                                    const objs = state.canvas.getObjects();
+                                    for (const obj of objs) {
+                                        if (obj.type === 'image') {
+                                            state.currentImage = obj;
+                                            state.isLoaded = true;
+                                            placeholder.style.display = 'none';
+                                            break;
+                                        }
+                                    }
+                                    showToast('Restored saved project', 'info');
+                                });
+                                const name = localStorage.getItem('batik_project_name');
+                                if (name) $('patternName').value = name;
+                            } catch (e) { /* ignore */ }
+                        }
+
+                        console.log('🎨 Batik Fabric Design Studio loaded successfully.');
+                    }
+                }, 100);
+
+                // Safety timeout
+                setTimeout(() => {
+                    if (!state.isReady) {
+                        console.warn('Canvas took too long to initialize, forcing setup.');
+                        if (!state.canvas) {
+                            // Try one more time
+                            initCanvas();
+                        }
+                        setupNavigation();
+                        bindEvents();
+                        updateColorPalette();
+                        generateAIColors();
+                        state.isReady = true;
+                    }
+                }, 5000);
+
+            } catch (e) {
+                console.error('Initialization error:', e);
+                showToast('Failed to initialize: ' + e.message, 'error');
+            }
         });
     </script>
 

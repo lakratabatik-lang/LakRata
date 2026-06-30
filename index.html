@@ -308,6 +308,18 @@
             background: var(--accent-dim);
             color: var(--accent);
         }
+        .canvas-toolbar .upload-btn {
+            background: var(--accent-dim);
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 5px 14px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+        }
+        .canvas-toolbar .upload-btn:hover {
+            background: var(--accent);
+            color: #0d0d0d;
+        }
         .canvas-wrapper {
             flex: 1;
             display: flex;
@@ -1041,6 +1053,11 @@
             <div class="canvas-area">
                 <div class="canvas-toolbar">
                     <div class="tool-group">
+                        <button id="uploadImageBtn" class="upload-btn" title="Upload Image">
+                            <i class="fas fa-cloud-upload-alt"></i> Upload
+                        </button>
+                    </div>
+                    <div class="tool-group">
                         <button id="zoomInBtn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
                         <button id="zoomOutBtn" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
                         <button id="zoomFitBtn" title="Fit to Screen"><i class="fas fa-expand"></i></button>
@@ -1349,6 +1366,9 @@
                 // Setup drag & drop
                 setupDragDrop();
 
+                // Setup upload button
+                setupUploadButton();
+
                 // Save initial history
                 saveHistory();
                 updateZoomDisplay();
@@ -1357,6 +1377,24 @@
                 console.error('Canvas init error:', e);
                 showToast('Failed to initialize canvas. Please refresh.', 'error');
             }
+        }
+
+        // ============================================================
+        //  UPLOAD BUTTON
+        // ============================================================
+        function setupUploadButton() {
+            const uploadBtn = $('uploadImageBtn');
+            if (!uploadBtn) return;
+            uploadBtn.onclick = () => {
+                // Create a file input and trigger click
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.jpg,.jpeg,.png,.svg';
+                input.onchange = (e) => {
+                    if (e.target.files.length) handleFile(e.target.files[0]);
+                };
+                input.click();
+            };
         }
 
         // ============================================================
@@ -1394,7 +1432,7 @@
         //  DRAG & DROP / UPLOAD
         // ============================================================
         function setupDragDrop() {
-            // Click to upload
+            // Click to upload zone
             uploadZone.addEventListener('click', () => {
                 const input = document.createElement('input');
                 input.type = 'file';
@@ -1518,8 +1556,6 @@
                 }
             }, {
                 crossOrigin: 'anonymous',
-                // Handle SVG loading
-                crossOrigin: 'anonymous'
             });
         }
 

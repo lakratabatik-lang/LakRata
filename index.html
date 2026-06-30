@@ -12,15 +12,6 @@
     <!-- Fabric.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js">
     </script>
-    <!-- Firebase (demo only, replace with your own config) -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js">
-    </script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-storage-compat.js">
-    </script>
 
     <style>
         /* ===== RESET & BASE ===== */
@@ -45,10 +36,6 @@
             --accent-hover: #dbb96a;
             --accent-dim: rgba(200, 168, 94, 0.15);
             --accent-glow: rgba(200, 168, 94, 0.3);
-            --success: #4caf50;
-            --danger: #e74c3c;
-            --warning: #f39c12;
-            --info: #3498db;
             --radius: 10px;
             --radius-sm: 6px;
             --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
@@ -67,7 +54,6 @@
             overflow: hidden;
             height: 100vh;
             width: 100vw;
-            user-select: none;
             margin: 0;
             padding: 0;
         }
@@ -234,15 +220,6 @@
             color: var(--accent);
             border-left: 3px solid var(--accent);
         }
-        .sidebar-nav .nav-item .badge {
-            margin-left: auto;
-            background: var(--accent);
-            color: #0d0d0d;
-            font-size: 10px;
-            padding: 2px 8px;
-            border-radius: 20px;
-            font-weight: 700;
-        }
         .sidebar-divider {
             height: 1px;
             background: var(--border-color);
@@ -328,15 +305,13 @@
             padding: 20px;
             overflow: auto;
             position: relative;
-            background:
-                radial-gradient(circle at 20% 50%, #111111 0%, #0a0a0a 100%);
+            background: radial-gradient(circle at 20% 50%, #111111 0%, #0a0a0a 100%);
         }
         .canvas-wrapper canvas {
             max-width: 100%;
             max-height: 100%;
             border-radius: var(--radius-sm);
             box-shadow: 0 0 60px rgba(0, 0, 0, 0.8), 0 0 120px rgba(0, 0, 0, 0.4);
-            image-rendering: auto;
         }
         .canvas-placeholder {
             display: flex;
@@ -380,6 +355,18 @@
         .canvas-placeholder .upload-zone.dragover {
             border-color: var(--accent);
             background: var(--accent-dim);
+        }
+        #canvasContainer {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #fabricCanvas {
+            position: relative;
+            z-index: 1;
         }
 
         /* ===== RIGHT PANEL ===== */
@@ -433,9 +420,8 @@
             display: block;
         }
 
-        /* ===== PANEL COMPONENTS ===== */
         .panel-section {
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         .panel-section .section-title {
             font-size: 12px;
@@ -447,14 +433,6 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-        }
-        .panel-section .section-title .action-link {
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 11px;
-            cursor: pointer;
-            text-transform: none;
-            letter-spacing: 0;
         }
         .color-grid {
             display: grid;
@@ -491,7 +469,6 @@
         .color-grid .color-swatch.active .check {
             opacity: 1;
         }
-
         .input-group {
             display: flex;
             gap: 8px;
@@ -515,12 +492,6 @@
         .input-group select:focus {
             border-color: var(--accent);
         }
-        .input-group input[type="range"] {
-            padding: 0;
-            background: transparent;
-            border: none;
-            accent-color: var(--accent);
-        }
         .input-group .btn-sm {
             padding: 8px 16px;
             background: var(--accent-dim);
@@ -537,15 +508,14 @@
             background: var(--accent);
             color: #0d0d0d;
         }
-
         .repeat-preview {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 6px;
             margin-top: 8px;
         }
         .repeat-preview .rp-item {
-            padding: 8px 6px;
+            padding: 8px 4px;
             text-align: center;
             font-size: 11px;
             border-radius: var(--radius-sm);
@@ -564,7 +534,6 @@
             color: var(--accent);
             background: var(--accent-dim);
         }
-
         .template-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -599,7 +568,6 @@
         .template-grid .template-item.active i {
             color: var(--accent);
         }
-
         .btn-full {
             width: 100%;
             padding: 10px;
@@ -630,14 +598,6 @@
             box-shadow: none;
             transform: none;
         }
-        .btn-full.danger {
-            background: var(--danger);
-            color: white;
-        }
-        .btn-full.danger:hover {
-            background: #c0392b;
-        }
-
         .fabric-preview {
             border-radius: var(--radius-sm);
             overflow: hidden;
@@ -688,13 +648,13 @@
             pointer-events: auto;
         }
         .toast.success {
-            border-left-color: var(--success);
+            border-left-color: #4caf50;
         }
         .toast.error {
-            border-left-color: var(--danger);
+            border-left-color: #e74c3c;
         }
         .toast.info {
-            border-left-color: var(--info);
+            border-left-color: #3498db;
         }
         @keyframes slideInUp {
             from {
@@ -829,110 +789,10 @@
             .app-header .logo span {
                 font-size: 16px;
             }
-            .app-header .logo i {
-                font-size: 20px;
-            }
             .header-actions .btn-primary span {
                 display: none;
             }
-            .modal {
-                padding: 20px;
-            }
         }
-        @media (max-width: 480px) {
-            .canvas-wrapper {
-                padding: 8px;
-            }
-            .color-grid {
-                grid-template-columns: repeat(5, 1fr);
-            }
-            .template-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            .repeat-preview {
-                grid-template-columns: repeat(3, 1fr);
-            }
-            .panel-content {
-                padding: 10px;
-            }
-        }
-
-        /* ===== UTILITIES ===== */
-        .hidden {
-            display: none !important;
-        }
-        .flex {
-            display: flex;
-        }
-        .flex-center {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .gap-2 {
-            gap: 8px;
-        }
-        .gap-4 {
-            gap: 16px;
-        }
-        .mt-2 {
-            margin-top: 8px;
-        }
-        .mt-4 {
-            margin-top: 16px;
-        }
-        .mb-2 {
-            margin-bottom: 8px;
-        }
-        .mb-4 {
-            margin-bottom: 16px;
-        }
-        .text-accent {
-            color: var(--accent);
-        }
-        .text-muted {
-            color: var(--text-muted);
-        }
-        .text-sm {
-            font-size: 12px;
-        }
-        .w-full {
-            width: 100%;
-        }
-
-        /* ===== LOADING SPINNER ===== */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-color);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            animation: spin 0.7s linear infinite;
-            display: inline-block;
-        }
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* ===== FILE INPUT STYLING ===== */
-        .file-input-wrap {
-            position: relative;
-            overflow: hidden;
-            display: inline-block;
-        }
-        .file-input-wrap input[type="file"] {
-            position: absolute;
-            left: 0;
-            top: 0;
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        /* Sidebar toggle (mobile) */
         .sidebar-toggle {
             display: none;
             background: transparent;
@@ -957,8 +817,6 @@
         .panel-toggle:hover {
             color: var(--text-primary);
         }
-
-        /* Mobile overlay */
         .mobile-overlay {
             display: none;
             position: fixed;
@@ -969,45 +827,33 @@
         .mobile-overlay.open {
             display: block;
         }
-
-        /* Canvas container */
-        #canvasContainer {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .hidden {
+            display: none !important;
         }
-        #canvasContainer canvas {
-            position: relative;
-            z-index: 1;
+        .text-muted {
+            color: var(--text-muted);
         }
-        #canvasContainer .canvas-placeholder {
-            z-index: 0;
+        .text-sm {
+            font-size: 12px;
         }
-        /* Ensure placeholder is above canvas but behind interactions */
-        #canvasContainer .canvas-placeholder {
-            pointer-events: none;
+        .mt-2 {
+            margin-top: 8px;
         }
-        #canvasContainer .canvas-placeholder .upload-zone {
-            pointer-events: auto;
+        .mt-4 {
+            margin-top: 16px;
         }
-        #fabricCanvas {
-            position: relative;
-            z-index: 1;
+        .mb-2 {
+            margin-bottom: 8px;
         }
     </style>
 </head>
 <body>
 
     <div id="app">
-        <!-- ===== HEADER ===== -->
+        <!-- HEADER -->
         <header class="app-header">
             <div style="display:flex;align-items:center;gap:10px;">
-                <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
-                    <i class="fas fa-bars"></i>
-                </button>
+                <button class="sidebar-toggle" id="sidebarToggle"><i class="fas fa-bars"></i></button>
                 <div class="logo">
                     <i class="fas fa-palette"></i>
                     <span>Batik Studio</span>
@@ -1018,17 +864,14 @@
                 <button title="Save Project" id="saveProjectBtn"><i class="fas fa-save"></i></button>
                 <button title="Export" id="exportBtn"><i class="fas fa-download"></i></button>
                 <button class="btn-primary" id="publishBtn"><i class="fas fa-rocket"></i><span>Publish</span></button>
-                <div class="user-avatar" id="userAvatar" title="Account">U</div>
+                <div class="user-avatar" id="userAvatar">U</div>
             </div>
         </header>
 
-        <!-- ===== MOBILE OVERLAY ===== -->
         <div class="mobile-overlay" id="mobileOverlay"></div>
 
-        <!-- ===== MAIN LAYOUT ===== -->
         <div class="main-layout">
-
-            <!-- ===== SIDEBAR ===== -->
+            <!-- SIDEBAR -->
             <nav class="sidebar" id="sidebar">
                 <div class="sidebar-nav">
                     <button class="nav-item active" data-tab="upload"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
@@ -1044,37 +887,35 @@
                     <button class="nav-item" data-tab="admin"><i class="fas fa-cog"></i> Admin</button>
                 </div>
                 <div class="sidebar-footer">
-                    <span>v2.0</span>
+                    <span>v3.0</span>
                     <span><i class="fas fa-circle" style="color:var(--accent);font-size:8px;"></i> Pro</span>
                 </div>
             </nav>
 
-            <!-- ===== CANVAS AREA ===== -->
+            <!-- CANVAS AREA -->
             <div class="canvas-area">
                 <div class="canvas-toolbar">
                     <div class="tool-group">
-                        <button id="uploadImageBtn" class="upload-btn" title="Upload Image">
-                            <i class="fas fa-cloud-upload-alt"></i> Upload
-                        </button>
+                        <button id="uploadImageBtn" class="upload-btn"><i class="fas fa-cloud-upload-alt"></i> Upload</button>
                     </div>
                     <div class="tool-group">
-                        <button id="zoomInBtn" title="Zoom In"><i class="fas fa-search-plus"></i></button>
-                        <button id="zoomOutBtn" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
-                        <button id="zoomFitBtn" title="Fit to Screen"><i class="fas fa-expand"></i></button>
+                        <button id="zoomInBtn"><i class="fas fa-search-plus"></i></button>
+                        <button id="zoomOutBtn"><i class="fas fa-search-minus"></i></button>
+                        <button id="zoomFitBtn"><i class="fas fa-expand"></i></button>
                         <span style="font-size:11px;color:var(--text-muted);margin-left:4px;" id="zoomLevel">100%</span>
                     </div>
                     <div class="tool-group">
-                        <button id="undoBtn" title="Undo"><i class="fas fa-undo"></i></button>
-                        <button id="redoBtn" title="Redo"><i class="fas fa-redo"></i></button>
+                        <button id="undoBtn"><i class="fas fa-undo"></i></button>
+                        <button id="redoBtn"><i class="fas fa-redo"></i></button>
                     </div>
                     <div class="tool-group">
-                        <button id="flipHBtn" title="Flip Horizontal"><i class="fas fa-arrows-alt-h"></i> H</button>
-                        <button id="flipVBtn" title="Flip Vertical"><i class="fas fa-arrows-alt-v"></i> V</button>
-                        <button id="rotateBtn" title="Rotate 90°"><i class="fas fa-undo-alt"></i> 90°</button>
+                        <button id="flipHBtn"><i class="fas fa-arrows-alt-h"></i> H</button>
+                        <button id="flipVBtn"><i class="fas fa-arrows-alt-v"></i> V</button>
+                        <button id="rotateBtn"><i class="fas fa-undo-alt"></i> 90°</button>
                     </div>
                     <div class="tool-group" style="margin-left:auto;">
-                        <button id="removeBgBtn" title="Remove Background"><i class="fas fa-eraser"></i> BG Remove</button>
-                        <button id="smoothBtn" title="Smooth Edges"><i class="fas fa-feather"></i> Smooth</button>
+                        <button id="removeBgBtn"><i class="fas fa-eraser"></i> BG Remove</button>
+                        <button id="smoothBtn"><i class="fas fa-feather"></i> Smooth</button>
                     </div>
                     <button class="panel-toggle" id="panelToggle" style="margin-left:4px;">
                         <i class="fas fa-chevron-right"></i>
@@ -1090,9 +931,7 @@
                             <p>Drag & drop your JPG, PNG, or SVG pattern here, or click to browse.</p>
                             <div class="upload-zone" id="uploadZone">
                                 <i class="fas fa-cloud-upload-alt" style="font-size:28px;color:var(--accent);"></i>
-                                <p style="margin-top:8px;font-weight:500;color:var(--text-secondary);">
-                                    Drop your pattern here
-                                </p>
+                                <p style="margin-top:8px;font-weight:500;color:var(--text-secondary);">Drop your pattern here</p>
                                 <p style="font-size:12px;color:var(--text-muted);">JPG, PNG, SVG • Up to 50MB</p>
                             </div>
                         </div>
@@ -1100,16 +939,16 @@
                 </div>
             </div>
 
-            <!-- ===== RIGHT PANEL ===== -->
+            <!-- RIGHT PANEL -->
             <div class="right-panel" id="rightPanel">
                 <div class="panel-tabs">
-                    <button class="tab active" data-panel="properties">Properties</button>
+                    <button class="tab active" data-panel="editor">Editor</button>
                     <button class="tab" data-panel="colors">Colors</button>
                     <button class="tab" data-panel="preview">Preview</button>
                 </div>
                 <div class="panel-content">
-                    <!-- PROPERTIES -->
-                    <div class="tab-pane active" id="panel-properties">
+                    <!-- EDITOR TAB -->
+                    <div class="tab-pane active" id="panel-editor">
                         <div class="panel-section">
                             <div class="section-title">Pattern Info</div>
                             <div class="input-group">
@@ -1123,15 +962,18 @@
                                 <button class="btn-sm" id="applySizeBtn">Apply</button>
                             </div>
                         </div>
+
                         <div class="panel-section">
-                            <div class="section-title">Color Palette</div>
-                            <div class="color-grid" id="colorPaletteGrid"></div>
-                            <div class="input-group mt-2">
-                                <input type="color" id="customColorPicker" value="#c8a85e" />
-                                <button class="btn-sm" id="addColorBtn">Add</button>
-                                <button class="btn-sm" id="replaceColorBtn">Replace</button>
+                            <div class="section-title">Repeat Pattern</div>
+                            <div class="repeat-preview" id="repeatPreview">
+                                <div class="rp-item active" data-mode="full">Full</div>
+                                <div class="rp-item" data-mode="half-drop">Half-Drop</div>
+                                <div class="rp-item" data-mode="mirror">Mirror</div>
+                                <div class="rp-item" data-mode="brick">Brick</div>
+                                <div class="rp-item" data-mode="diamond">Diamond</div>
                             </div>
                         </div>
+
                         <div class="panel-section">
                             <div class="section-title">Fabric Preview</div>
                             <div class="fabric-preview">
@@ -1146,15 +988,25 @@
                                 </select>
                                 <div class="fabric-swatch" id="fabricSwatch"></div>
                             </div>
+                            <button class="btn-full mt-2" id="applyToFabricBtn"><i class="fas fa-check"></i> Apply to Fabric</button>
                         </div>
-                        <button class="btn-full" id="applyToFabricBtn"><i class="fas fa-check"></i> Apply to Fabric</button>
                     </div>
 
-                    <!-- COLORS -->
+                    <!-- COLORS TAB -->
                     <div class="tab-pane" id="panel-colors">
                         <div class="panel-section">
+                            <div class="section-title">Color Palette</div>
+                            <div class="color-grid" id="colorPaletteGrid"></div>
+                            <div class="input-group mt-2">
+                                <input type="color" id="customColorPicker" value="#c8a85e" />
+                                <button class="btn-sm" id="addColorBtn">Add</button>
+                                <button class="btn-sm" id="replaceColorBtn">Replace</button>
+                            </div>
+                        </div>
+
+                        <div class="panel-section">
                             <div class="section-title">Color Replace</div>
-                            <p class="text-sm text-muted" style="margin-bottom:8px;">Select a color from your pattern, then choose a new color.</p>
+                            <p class="text-sm text-muted" style="margin-bottom:8px;">Replace a color in your pattern.</p>
                             <div class="input-group">
                                 <input type="color" id="replaceFromColor" value="#000000" />
                                 <span style="color:var(--text-muted);">→</span>
@@ -1162,11 +1014,13 @@
                                 <button class="btn-sm" id="executeReplaceBtn">Replace</button>
                             </div>
                         </div>
+
                         <div class="panel-section">
                             <div class="section-title">AI Color Suggestions</div>
                             <div class="color-grid" id="aiColorGrid"></div>
                             <button class="btn-full secondary mt-2" id="generateAIColorsBtn"><i class="fas fa-magic"></i> Generate AI Colors</button>
                         </div>
+
                         <div class="panel-section">
                             <div class="section-title">Color Library</div>
                             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;">
@@ -1182,11 +1036,11 @@
                         </div>
                     </div>
 
-                    <!-- PREVIEW -->
+                    <!-- PREVIEW TAB -->
                     <div class="tab-pane" id="panel-preview">
                         <div class="panel-section">
                             <div class="section-title">Template Preview</div>
-                            <div class="template-grid">
+                            <div class="template-grid" id="templateGrid">
                                 <div class="template-item active" data-template="saree"><i class="fas fa-female"></i>Saree</div>
                                 <div class="template-item" data-template="sarong"><i class="fas fa-tshirt"></i>Sarong</div>
                                 <div class="template-item" data-template="shawl"><i class="fas fa-scarf"></i>Shawl</div>
@@ -1194,26 +1048,24 @@
                                 <div class="template-item" data-template="bedsheet"><i class="fas fa-bed"></i>Bed Sheet</div>
                                 <div class="template-item" data-template="curtain"><i class="fas fa-window-maximize"></i>Curtain</div>
                             </div>
+                            <button class="btn-full mt-2" id="renderTemplateBtn"><i class="fas fa-eye"></i> Render Template</button>
                         </div>
                         <div class="panel-section">
                             <div class="section-title">Live Preview</div>
-                            <div style="background:var(--bg-input);border-radius:var(--radius-sm);padding:12px;text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border-color);">
+                            <div style="background:var(--bg-input);border-radius:var(--radius-sm);padding:12px;text-align:center;min-height:80px;display:flex;align-items:center;justify-content:center;border:1px solid var(--border-color);">
                                 <div id="livePreviewContainer" style="width:100%;">
-                                    <p class="text-muted text-sm">Upload a pattern to see live preview</p>
+                                    <p class="text-muted text-sm">Upload a pattern and render a template</p>
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-full" id="renderTemplateBtn"><i class="fas fa-eye"></i> Render Template</button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== TOAST CONTAINER ===== -->
+    <!-- TOAST & MODAL -->
     <div class="toast-container" id="toastContainer"></div>
-
-    <!-- ===== MODAL ===== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h2 id="modalTitle">Confirm</h2>
@@ -1227,40 +1079,12 @@
 
     <script>
         // ============================================================
-        //  FIREBASE CONFIG (Replace with your own)
-        // ============================================================
-        const firebaseConfig = {
-            apiKey: "AIzaSyDemoKey1234567890",
-            authDomain: "your-project.firebaseapp.com",
-            projectId: "your-project",
-            storageBucket: "your-project.appspot.com",
-            messagingSenderId: "1234567890",
-            appId: "1:1234567890:web:abcdef123456"
-        };
-
-        let firebaseInitialized = false;
-        try {
-            if (firebaseConfig.apiKey !== "AIzaSyDemoKey1234567890") {
-                firebase.initializeApp(firebaseConfig);
-                firebaseInitialized = true;
-                console.log("Firebase initialized.");
-            } else {
-                console.warn("Firebase: Using demo config. Replace with your own.");
-            }
-        } catch (e) {
-            console.warn("Firebase init skipped:", e.message);
-        }
-
-        // ============================================================
         //  STATE
         // ============================================================
         const state = {
             canvas: null,
             currentImage: null,
-            originalImageData: null,
             patternName: 'My Batik Design',
-            activeTab: 'upload',
-            fabricType: 'cotton',
             zoom: 1,
             history: [],
             historyIndex: -1,
@@ -1269,51 +1093,36 @@
             selectedColor: '#c8a85e',
             repeatMode: 'full',
             templateType: 'saree',
+            fabricType: 'cotton',
             isLoaded: false,
             isReady: false,
         };
 
-        // ============================================================
-        //  DOM REFS
-        // ============================================================
         const $ = id => document.getElementById(id);
         const canvasEl = $('fabricCanvas');
-        const wrapper = $('canvasWrapper');
         const placeholder = $('placeholder');
         const uploadZone = $('uploadZone');
-        const sidebar = $('sidebar');
-        const rightPanel = $('rightPanel');
-        const mobileOverlay = $('mobileOverlay');
         const toastContainer = $('toastContainer');
         const modalOverlay = $('modalOverlay');
 
         // ============================================================
-        //  TOAST SYSTEM
+        //  TOAST & MODAL
         // ============================================================
-        function showToast(message, type = 'info', duration = 3000) {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
+        function showToast(msg, type = 'info', dur = 3000) {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
             const icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', info: 'fa-info-circle' };
-            toast.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${message}`;
-            toastContainer.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(20px)';
-                setTimeout(() => toast.remove(), 300);
-            }, duration);
+            t.innerHTML = `<i class="fas ${icons[type] || icons.info}"></i> ${msg}`;
+            toastContainer.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0';
+                setTimeout(() => t.remove(), 300); }, dur);
         }
 
-        // ============================================================
-        //  MODAL SYSTEM
-        // ============================================================
-        function showModal(title, message, onConfirm) {
+        function showModal(title, msg, onConfirm) {
             $('modalTitle').textContent = title;
-            $('modalMessage').textContent = message;
+            $('modalMessage').textContent = msg;
             modalOverlay.classList.add('open');
-            $('modalConfirm').onclick = () => {
-                modalOverlay.classList.remove('open');
-                if (onConfirm) onConfirm();
-            };
+            $('modalConfirm').onclick = () => { modalOverlay.classList.remove('open'); if (onConfirm) onConfirm(); };
             $('modalCancel').onclick = () => modalOverlay.classList.remove('open');
         }
 
@@ -1333,140 +1142,52 @@
                     backgroundColor: '#1a1a1a',
                     selection: true,
                     preserveObjectStacking: true,
-                    renderOnAddRemove: true,
                 });
 
-                state.canvas.on('object:modified', () => saveHistory());
-                state.canvas.on('object:added', () => saveHistory());
-                state.canvas.on('object:removed', () => saveHistory());
+                state.canvas.on('object:modified', saveHistory);
+                state.canvas.on('object:added', saveHistory);
+                state.canvas.on('object:removed', saveHistory);
 
                 state.isReady = true;
-
-                // Zoom controls
-                $('zoomInBtn').onclick = () => zoomCanvas(0.1);
-                $('zoomOutBtn').onclick = () => zoomCanvas(-0.1);
-                $('zoomFitBtn').onclick = fitCanvas;
-
-                // Resize handler
-                let resizeTimer;
-                window.addEventListener('resize', () => {
-                    clearTimeout(resizeTimer);
-                    resizeTimer = setTimeout(() => {
-                        const r = $('canvasContainer').getBoundingClientRect();
-                        const newW = Math.min(r.width - 40, 900);
-                        const newH = Math.min(r.height - 40, 700);
-                        if (state.canvas) {
-                            state.canvas.setWidth(Math.max(newW, 200));
-                            state.canvas.setHeight(Math.max(newH, 200));
-                            state.canvas.renderAll();
-                        }
-                    }, 150);
-                });
-
-                // Setup drag & drop
+                setupControls();
                 setupDragDrop();
-
-                // Setup upload button
                 setupUploadButton();
-
-                // Save initial history
                 saveHistory();
                 updateZoomDisplay();
-                showToast('Canvas ready! Upload a pattern to begin.', 'info');
+                showToast('Canvas ready! Upload a pattern.', 'info');
             } catch (e) {
-                console.error('Canvas init error:', e);
-                showToast('Failed to initialize canvas. Please refresh.', 'error');
+                console.error(e);
+                showToast('Canvas init failed.', 'error');
             }
         }
 
         // ============================================================
-        //  UPLOAD BUTTON
+        //  UPLOAD
         // ============================================================
         function setupUploadButton() {
-            const uploadBtn = $('uploadImageBtn');
-            if (!uploadBtn) return;
-            uploadBtn.onclick = () => {
-                // Create a file input and trigger click
+            $('uploadImageBtn').onclick = () => {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = '.jpg,.jpeg,.png,.svg';
-                input.onchange = (e) => {
-                    if (e.target.files.length) handleFile(e.target.files[0]);
-                };
+                input.onchange = (e) => { if (e.target.files.length) handleFile(e.target.files[0]); };
                 input.click();
             };
         }
 
-        // ============================================================
-        //  ZOOM
-        // ============================================================
-        function zoomCanvas(delta) {
-            if (!state.canvas) return;
-            const z = state.zoom + delta;
-            state.zoom = Math.max(0.2, Math.min(3, z));
-            state.canvas.setZoom(state.zoom);
-            state.canvas.renderAll();
-            updateZoomDisplay();
-        }
-
-        function fitCanvas() {
-            if (!state.canvas) return;
-            const container = $('canvasContainer');
-            const rect = container.getBoundingClientRect();
-            const cw = state.canvas.getWidth();
-            const ch = state.canvas.getHeight();
-            if (cw === 0 || ch === 0) return;
-            const scaleX = (rect.width - 40) / cw;
-            const scaleY = (rect.height - 40) / ch;
-            state.zoom = Math.min(scaleX, scaleY, 1);
-            state.canvas.setZoom(state.zoom);
-            state.canvas.renderAll();
-            updateZoomDisplay();
-        }
-
-        function updateZoomDisplay() {
-            $('zoomLevel').textContent = Math.round(state.zoom * 100) + '%';
-        }
-
-        // ============================================================
-        //  DRAG & DROP / UPLOAD
-        // ============================================================
         function setupDragDrop() {
-            // Click to upload zone
             uploadZone.addEventListener('click', () => {
                 const input = document.createElement('input');
                 input.type = 'file';
                 input.accept = '.jpg,.jpeg,.png,.svg';
-                input.onchange = (e) => {
-                    if (e.target.files.length) handleFile(e.target.files[0]);
-                };
+                input.onchange = (e) => { if (e.target.files.length) handleFile(e.target.files[0]); };
                 input.click();
             });
 
-            // Drag & drop on wrapper
-            const wrapperEl = $('canvasWrapper');
-            wrapperEl.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadZone.classList.add('dragover');
-            });
-            wrapperEl.addEventListener('dragleave', () => {
-                uploadZone.classList.remove('dragover');
-            });
-            wrapperEl.addEventListener('drop', (e) => {
-                e.preventDefault();
-                uploadZone.classList.remove('dragover');
-                if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
-            });
-
-            // Also allow drop on the placeholder
-            placeholder.addEventListener('dragover', (e) => {
-                e.preventDefault();
-                uploadZone.classList.add('dragover');
-            });
-            placeholder.addEventListener('dragleave', () => {
-                uploadZone.classList.remove('dragover');
-            });
-            placeholder.addEventListener('drop', (e) => {
+            const wrap = $('canvasWrapper');
+            wrap.addEventListener('dragover', (e) => { e.preventDefault();
+                uploadZone.classList.add('dragover'); });
+            wrap.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
+            wrap.addEventListener('drop', (e) => {
                 e.preventDefault();
                 uploadZone.classList.remove('dragover');
                 if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
@@ -1474,385 +1195,499 @@
         }
 
         function handleFile(file) {
-            const validTypes = ['image/jpeg', 'image/png', 'image/svg+xml'];
-            if (!validTypes.includes(file.type)) {
-                showToast('Please upload JPG, PNG, or SVG files.', 'error');
-                return;
-            }
-            if (file.size > 50 * 1024 * 1024) {
-                showToast('File too large. Max 50MB.', 'error');
-                return;
-            }
-
+            const valid = ['image/jpeg', 'image/png', 'image/svg+xml'];
+            if (!valid.includes(file.type)) { showToast('Upload JPG, PNG, or SVG.', 'error'); return; }
+            if (file.size > 50 * 1024 * 1024) { showToast('Max 50MB.', 'error'); return; }
             const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = e.target.result;
-                loadImageToCanvas(data, file.name);
-            };
-            reader.onerror = () => {
-                showToast('Failed to read file.', 'error');
-            };
+            reader.onload = (e) => loadImageToCanvas(e.target.result, file.name);
+            reader.onerror = () => showToast('File read error.', 'error');
             reader.readAsDataURL(file);
         }
 
         function loadImageToCanvas(dataUrl, name) {
-            if (!state.canvas || !state.isReady) {
-                showToast('Canvas not ready. Please wait.', 'error');
-                return;
-            }
-
+            if (!state.canvas || !state.isReady) { showToast('Canvas not ready.', 'error'); return; }
             fabric.Image.fromURL(dataUrl, (img) => {
-                if (!img) {
-                    showToast('Failed to load image. Try a different file.', 'error');
-                    return;
-                }
-
+                if (!img) { showToast('Invalid image.', 'error'); return; }
                 try {
-                    // Remove existing objects
                     state.canvas.clear();
                     state.canvas.backgroundColor = '#1a1a1a';
-
-                    const cw = state.canvas.getWidth();
-                    const ch = state.canvas.getHeight();
-
-                    // Calculate scale to fit
+                    const cw = state.canvas.getWidth(),
+                        ch = state.canvas.getHeight();
                     let scale = Math.min((cw - 60) / img.width, (ch - 60) / img.height, 1);
                     scale = Math.max(scale, 0.1);
-
                     img.scale(scale);
-                    img.set({
-                        left: (cw - img.width * scale) / 2,
-                        top: (ch - img.height * scale) / 2,
-                        selectable: true,
-                        hasControls: true,
-                        hasBorders: true,
-                    });
-
+                    img.set({ left: (cw - img.width * scale) / 2, top: (ch - img.height * scale) / 2, selectable: true,
+                        hasControls: true });
                     state.canvas.add(img);
                     state.canvas.setActiveObject(img);
                     state.canvas.renderAll();
-
                     state.currentImage = img;
-                    state.originalImageData = img.toDataURL('image/png');
                     state.isLoaded = true;
-
-                    // Hide placeholder
                     placeholder.style.display = 'none';
-
-                    // Update pattern name
                     if (name) {
                         const base = name.replace(/\.[^.]+$/, '');
                         $('patternName').value = base;
                         state.patternName = base;
                     }
-
                     saveHistory();
                     updateColorPalette();
                     generateAIColors();
-                    showToast('Pattern loaded successfully!', 'success');
-                } catch (e) {
-                    console.error('Load image error:', e);
-                    showToast('Error loading image: ' + e.message, 'error');
-                }
-            }, {
-                crossOrigin: 'anonymous',
-            });
+                    showToast('Pattern loaded!', 'success');
+                } catch (e) { console.error(e);
+                    showToast('Load error.', 'error'); }
+            }, { crossOrigin: 'anonymous' });
         }
 
         // ============================================================
-        //  COLOR PALETTE
+        //  CONTROLS
+        // ============================================================
+        function setupControls() {
+            $('zoomInBtn').onclick = () => { if (state.canvas) { state.zoom = Math.min(3, state.zoom + 0.1);
+                    state.canvas.setZoom(state.zoom);
+                    state.canvas.renderAll();
+                    updateZoomDisplay(); } };
+            $('zoomOutBtn').onclick = () => { if (state.canvas) { state.zoom = Math.max(0.2, state.zoom - 0.1);
+                    state.canvas.setZoom(state.zoom);
+                    state.canvas.renderAll();
+                    updateZoomDisplay(); } };
+            $('zoomFitBtn').onclick = fitCanvas;
+            $('undoBtn').onclick = undo;
+            $('redoBtn').onclick = redo;
+            $('flipHBtn').onclick = () => { if (state.currentImage) { state.currentImage.flipX = !state.currentImage.flipX;
+                    state.canvas.renderAll();
+                    saveHistory();
+                    showToast('Flipped H', 'info'); } else showToast('Upload first.', 'error'); };
+            $('flipVBtn').onclick = () => { if (state.currentImage) { state.currentImage.flipY = !state.currentImage.flipY;
+                    state.canvas.renderAll();
+                    saveHistory();
+                    showToast('Flipped V', 'info'); } else showToast('Upload first.', 'error'); };
+            $('rotateBtn').onclick = () => { if (state.currentImage) { state.currentImage.rotate((state.currentImage
+                        .angle || 0) + 90);
+                    state.canvas.renderAll();
+                    saveHistory();
+                    showToast('Rotated 90°', 'info'); } else showToast('Upload first.', 'error'); };
+            $('removeBgBtn').onclick = removeBackground;
+            $('smoothBtn').onclick = () => { if (state.currentImage) showToast('Smooth (demo)', 'info');
+                else showToast('Upload first.', 'error'); };
+            $('applySizeBtn').onclick = () => { if (!state.currentImage) { showToast('Upload first.', 'error'); return; }
+                const w = parseInt($('patternWidth').value) || 800,
+                    h = parseInt($('patternHeight').value) || 800;
+                const img = state.currentImage;
+                const cw = img.width * img.scaleX,
+                    ch = img.height * img.scaleY;
+                if (cw > 0 && ch > 0) { img.scaleX *= w / cw;
+                    img.scaleY *= h / ch;
+                    state.canvas.renderAll();
+                    saveHistory();
+                    showToast(`Resized to ${w}x${h}`, 'success'); } };
+            $('applyToFabricBtn').onclick = () => { if (state.currentImage) { state.canvas.backgroundColor = '#2a2a2a';
+                    state.canvas.renderAll();
+                    showToast(`Applied to ${state.fabricType}`, 'success'); } else showToast('Upload first.', 'error'); };
+            $('fabricTypeSelect').onchange = () => {
+                state.fabricType = $('fabricTypeSelect').value;
+                const sw = $('fabricSwatch');
+                const map = { cotton: 'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 10px, #333 10px, #333 20px)',
+                    rayon: 'repeating-linear-gradient(90deg, #1a1a2a, #1a1a2a 8px, #2a2a3a 8px, #2a2a3a 16px)',
+                    silk: 'repeating-linear-gradient(135deg, #2a1a1a, #2a1a1a 12px, #3a2a2a 12px, #3a2a2a 24px)',
+                    linen: 'repeating-linear-gradient(0deg, #1a1a1a, #1a1a1a 4px, #2a2a2a 4px, #2a2a2a 8px)',
+                    satin: 'repeating-linear-gradient(70deg, #2a2a3a, #2a2a3a 6px, #3a3a4a 6px, #3a3a4a 12px)',
+                    voile: 'repeating-linear-gradient(20deg, #1a1a22, #1a1a22 14px, #2a2a32 14px, #2a2a32 28px)' };
+                sw.style.background = map[state.fabricType] || map.cotton;
+            };
+            // Repeat
+            document.querySelectorAll('.rp-item').forEach(el => {
+                el.onclick = () => {
+                    document.querySelectorAll('.rp-item').forEach(e => e.classList.remove('active'));
+                    el.classList.add('active');
+                    generateRepeat(el.dataset.mode);
+                };
+            });
+            // Templates
+            document.querySelectorAll('.template-item').forEach(el => {
+                el.onclick = () => {
+                    document.querySelectorAll('.template-item').forEach(e => e.classList.remove('active'));
+                    el.classList.add('active');
+                    state.templateType = el.dataset.template;
+                    showToast(`Selected ${el.dataset.template}`, 'info');
+                };
+            });
+            $('renderTemplateBtn').onclick = () => renderTemplate(state.templateType);
+            // Color controls
+            $('addColorBtn').onclick = () => {
+                const c = $('customColorPicker').value;
+                if (!state.colors.includes(c)) { state.colors.push(c);
+                    updateColorPalette();
+                    showToast(`Added ${c}`, 'info'); } else showToast('Already in palette.', 'info');
+            };
+            $('replaceColorBtn').onclick = () => {
+                const c = $('customColorPicker').value;
+                const active = document.querySelector('#colorPaletteGrid .color-swatch.active');
+                if (active) {
+                    const idx = Array.from(document.querySelectorAll('#colorPaletteGrid .color-swatch')).indexOf(
+                    active);
+                    if (idx > -1) { state.colors[idx] = c;
+                        updateColorPalette();
+                        showToast(`Updated to ${c}`, 'info'); }
+                } else showToast('Select a color in palette.', 'error');
+            };
+            $('executeReplaceBtn').onclick = () => {
+                const from = $('replaceFromColor').value,
+                    to = $('replaceToColor').value;
+                replaceColor(from, to);
+            };
+            $('generateAIColorsBtn').onclick = generateAIColors;
+            // Library
+            document.querySelectorAll('[data-library]').forEach(btn => {
+                btn.onclick = () => {
+                    const lib = btn.dataset.library;
+                    const palettes = {
+                        batik: ['#8b4513', '#d4a373', '#2d1b0e', '#c8a85e', '#5a3d1a'],
+                        srilankan: ['#c8a85e', '#8b7a4a', '#e74c3c', '#2ecc71', '#3498db'],
+                        nature: ['#2ecc71', '#27ae60', '#f39c12', '#e67e22', '#1abc9c'],
+                        modern: ['#2c3e50', '#e74c3c', '#ecf0f1', '#3498db', '#f1c40f'],
+                        luxury: ['#c8a85e', '#f5d78e', '#8b7a4a', '#2d1b0e', '#d4af37'],
+                        wedding: ['#f5f0e8', '#d4b87a', '#c8a85e', '#f0e0b8', '#8b7a4a'],
+                        kids: ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0']
+                    };
+                    const colors = palettes[lib] || palettes.batik;
+                    state.colors = colors;
+                    updateColorPalette();
+                    const grid = $('libraryColorGrid');
+                    if (grid) {
+                        grid.innerHTML = '';
+                        colors.forEach(c => {
+                            const sw = document.createElement('div');
+                            sw.className = 'color-swatch';
+                            sw.style.background = c;
+                            sw.style.aspectRatio = '1';
+                            sw.style.borderRadius = 'var(--radius-sm)';
+                            sw.style.cursor = 'pointer';
+                            sw.style.border = '2px solid transparent';
+                            sw.onclick = () => { $('replaceToColor').value = c;
+                                showToast(`Selected ${c}`, 'info'); };
+                            grid.appendChild(sw);
+                        });
+                    }
+                    showToast(`Loaded ${lib}`, 'success');
+                };
+            });
+            // Header actions
+            $('newProjectBtn').onclick = () => showModal('New Project', 'Clear current design?', () => { if (state.canvas) {
+                    state.canvas.clear();
+                    state.canvas.backgroundColor = '#1a1a1a';
+                    state.currentImage = null;
+                    state.isLoaded = false;
+                    placeholder.style.display = 'flex';
+                    state.canvas.renderAll();
+                    state.history = [];
+                    state.historyIndex = -1;
+                    showToast('New project', 'success'); } });
+            $('saveProjectBtn').onclick = () => {
+                if (state.currentImage && state.canvas) {
+                    try { localStorage.setItem('batik_project', JSON.stringify(state.canvas.toJSON()));
+                        localStorage.setItem('batik_project_name', $('patternName').value);
+                        showToast('Saved locally!', 'success'); } catch (e) { showToast('Save failed.', 'error'); }
+                } else showToast('No design to save.', 'error');
+            };
+            $('exportBtn').onclick = () => {
+                if (!state.currentImage) { showToast('Upload first.', 'error'); return; }
+                showModal('Export', 'Choose format:', () => {});
+                const acts = document.querySelector('.modal .modal-actions');
+                acts.querySelectorAll('.export-btn').forEach(el => el.remove());
+                ['png', 'jpg', 'svg'].forEach(f => {
+                    const b = document.createElement('button');
+                    b.className = 'export-btn';
+                    b.textContent = f.toUpperCase();
+                    b.style.cssText =
+                        'flex:1;padding:8px;border:none;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);cursor:pointer;font-weight:600;';
+                    b.onclick = () => { exportFile(f);
+                        modalOverlay.classList.remove('open'); };
+                    acts.appendChild(b);
+                });
+                acts.appendChild($('modalCancel'));
+                acts.appendChild($('modalConfirm'));
+            };
+            $('publishBtn').onclick = () => { if (state.currentImage) showToast('Published! (demo)', 'success');
+                else showToast('Upload first.', 'error'); };
+            $('userAvatar').onclick = () => showToast('👤 Designer Pro', 'info');
+
+            // Sidebar / Panel toggles
+            document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => {
+                el.onclick = () => {
+                    document.querySelectorAll('.sidebar-nav .nav-item').forEach(e => e.classList.remove('active'));
+                    el.classList.add('active');
+                    if (window.innerWidth <= 992) { $('sidebar').classList.remove('open');
+                        $('mobileOverlay').classList.remove('open'); }
+                    showToast(`Switched to ${el.dataset.tab}`, 'info', 1500);
+                };
+            });
+            document.querySelectorAll('.panel-tabs .tab').forEach(el => {
+                el.onclick = () => {
+                    document.querySelectorAll('.panel-tabs .tab').forEach(e => e.classList.remove('active'));
+                    el.classList.add('active');
+                    document.querySelectorAll('.tab-pane').forEach(e => e.classList.remove('active'));
+                    const t = document.getElementById(`panel-${el.dataset.panel}`);
+                    if (t) t.classList.add('active');
+                };
+            });
+            $('sidebarToggle').onclick = () => { $('sidebar').classList.toggle('open');
+                $('mobileOverlay').classList.toggle('open'); };
+            $('panelToggle').onclick = () => { $('rightPanel').classList.toggle('open');
+                $('mobileOverlay').classList.toggle('open'); };
+            $('mobileOverlay').onclick = () => { $('sidebar').classList.remove('open');
+                $('rightPanel').classList.remove('open');
+                $('mobileOverlay').classList.remove('open'); };
+
+            // Load saved
+            const saved = localStorage.getItem('batik_project');
+            if (saved && state.canvas) {
+                try {
+                    const data = JSON.parse(saved);
+                    state.canvas.loadFromJSON(data, () => {
+                        state.canvas.renderAll();
+                        const objs = state.canvas.getObjects();
+                        for (const o of objs) { if (o.type === 'image') { state.currentImage = o;
+                                state.isLoaded = true;
+                                placeholder.style.display = 'none'; break; } }
+                        showToast('Restored project', 'info');
+                    });
+                    const n = localStorage.getItem('batik_project_name');
+                    if (n) $('patternName').value = n;
+                } catch (e) {}
+            }
+            // Init fabric swatch
+            const sw = $('fabricSwatch');
+            if (sw) sw.style.background = 'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 10px, #333 10px, #333 20px)';
+        }
+
+        // ============================================================
+        //  ZOOM
+        // ============================================================
+        function fitCanvas() {
+            if (!state.canvas) return;
+            const rect = $('canvasContainer').getBoundingClientRect();
+            const cw = state.canvas.getWidth(),
+                ch = state.canvas.getHeight();
+            if (cw === 0 || ch === 0) return;
+            state.zoom = Math.min((rect.width - 40) / cw, (rect.height - 40) / ch, 1);
+            state.canvas.setZoom(state.zoom);
+            state.canvas.renderAll();
+            updateZoomDisplay();
+        }
+
+        function updateZoomDisplay() { $('zoomLevel').textContent = Math.round(state.zoom * 100) + '%'; }
+
+        // ============================================================
+        //  HISTORY
+        // ============================================================
+        function saveHistory() {
+            if (!state.canvas || !state.isReady) return;
+            try {
+                const data = state.canvas.toJSON();
+                while (state.history.length > state.maxHistory) state.history.shift();
+                if (state.history.length > 0 && JSON.stringify(state.history[state.history.length - 1]) === JSON.stringify(
+                        data)) return;
+                state.history.push(data);
+                state.historyIndex = state.history.length - 1;
+            } catch (e) {}
+        }
+
+        function undo() { if (state.historyIndex > 0) { state.historyIndex--;
+                restoreHistory(state.history[state.historyIndex]);
+                showToast('Undo', 'info', 1500); } else showToast('Nothing to undo', 'info', 1500); }
+
+        function redo() { if (state.historyIndex < state.history.length - 1) { state.historyIndex++;
+                restoreHistory(state.history[state.historyIndex]);
+                showToast('Redo', 'info', 1500); } else showToast('Nothing to redo', 'info', 1500); }
+
+        function restoreHistory(data) {
+            if (!state.canvas) return;
+            try {
+                state.canvas.loadFromJSON(data, () => {
+                    state.canvas.renderAll();
+                    const objs = state.canvas.getObjects();
+                    for (const o of objs) { if (o.type === 'image') { state.currentImage = o;
+                            state.isLoaded = true;
+                            placeholder.style.display = 'none'; break; } }
+                });
+            } catch (e) {}
+        }
+
+        // ============================================================
+        //  COLOR FUNCTIONS
         // ============================================================
         function updateColorPalette() {
             const grid = $('colorPaletteGrid');
             if (!grid) return;
             grid.innerHTML = '';
-
             state.colors.forEach((c, i) => {
-                const swatch = document.createElement('div');
-                swatch.className = 'color-swatch' + (i === 0 ? ' active' : '');
-                swatch.style.background = c;
-                swatch.dataset.color = c;
-                swatch.innerHTML = i === 0 ? '<span class="check"><i class="fas fa-check"></i></span>' : '';
-                swatch.onclick = () => {
-                    document.querySelectorAll('#colorPaletteGrid .color-swatch').forEach(el => {
-                        el.classList.remove('active');
-                        const chk = el.querySelector('.check');
-                        if (chk) chk.remove();
-                    });
-                    swatch.classList.add('active');
-                    const check = document.createElement('span');
-                    check.className = 'check';
-                    check.innerHTML = '<i class="fas fa-check"></i>';
-                    swatch.appendChild(check);
+                const sw = document.createElement('div');
+                sw.className = 'color-swatch' + (i === 0 ? ' active' : '');
+                sw.style.background = c;
+                sw.dataset.color = c;
+                sw.innerHTML = i === 0 ? '<span class="check"><i class="fas fa-check"></i></span>' : '';
+                sw.onclick = () => {
+                    document.querySelectorAll('#colorPaletteGrid .color-swatch').forEach(el => { el.classList.remove(
+                            'active'); const ch = el.querySelector('.check'); if (ch) ch.remove(); });
+                    sw.classList.add('active');
+                    const ch = document.createElement('span');
+                    ch.className = 'check';
+                    ch.innerHTML = '<i class="fas fa-check"></i>';
+                    sw.appendChild(ch);
                     state.selectedColor = c;
                     $('customColorPicker').value = c;
                 };
-                grid.appendChild(swatch);
+                grid.appendChild(sw);
             });
         }
 
-        // ============================================================
-        //  COLOR REPLACE (Pixel-based)
-        // ============================================================
-        function replaceColor(fromColor, toColor) {
-            if (!state.currentImage || !state.canvas) {
-                showToast('Please upload a pattern first.', 'error');
-                return;
-            }
-
-            const img = state.currentImage;
-            const canvas = state.canvas;
-
-            // Get the image data as a canvas
-            const tempCanvas = document.createElement('canvas');
-            const ctx = tempCanvas.getContext('2d');
-            const w = Math.round(img.width * img.scaleX);
-            const h = Math.round(img.height * img.scaleY);
-            tempCanvas.width = w || 100;
-            tempCanvas.height = h || 100;
-
-            // Draw the image at full resolution
-            const origData = img.toDataURL('image/png');
-            const tempImg = new Image();
-            tempImg.crossOrigin = 'anonymous';
-
-            tempImg.onload = () => {
-                try {
-                    ctx.drawImage(tempImg, 0, 0, tempCanvas.width, tempCanvas.height);
-                    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-                    const data = imageData.data;
-
-                    const from = hexToRgb(fromColor);
-                    const to = hexToRgb(toColor);
-                    const threshold = 40;
-
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i],
-                            g = data[i + 1],
-                            b = data[i + 2];
-                        const dist = Math.sqrt(
-                            Math.pow(r - from.r, 2) +
-                            Math.pow(g - from.g, 2) +
-                            Math.pow(b - from.b, 2)
-                        );
-                        if (dist < threshold) {
-                            data[i] = to.r;
-                            data[i + 1] = to.g;
-                            data[i + 2] = to.b;
-                        }
-                    }
-                    ctx.putImageData(imageData, 0, 0);
-
-                    const newDataUrl = tempCanvas.toDataURL('image/png');
-                    fabric.Image.fromURL(newDataUrl, (newImg) => {
-                        if (!newImg) {
-                            showToast('Failed to process image.', 'error');
-                            return;
-                        }
-                        const scaleX = img.scaleX || 1;
-                        const scaleY = img.scaleY || 1;
-                        const left = img.left || 0;
-                        const top = img.top || 0;
-                        const angle = img.angle || 0;
-
-                        canvas.remove(img);
-                        newImg.scaleX = scaleX;
-                        newImg.scaleY = scaleY;
-                        newImg.set({
-                            left: left,
-                            top: top,
-                            angle: angle,
-                            selectable: true,
-                            hasControls: true,
-                            hasBorders: true,
-                        });
-                        canvas.add(newImg);
-                        canvas.setActiveObject(newImg);
-                        canvas.renderAll();
-                        state.currentImage = newImg;
-                        saveHistory();
-                        showToast(`Replaced ${fromColor} → ${toColor}`, 'success');
-                    }, { crossOrigin: 'anonymous' });
-                } catch (e) {
-                    console.error('Replace color error:', e);
-                    showToast('Error replacing color: ' + e.message, 'error');
-                }
-            };
-            tempImg.onerror = () => {
-                showToast('Failed to load image data for color replacement.', 'error');
-            };
-            tempImg.src = origData;
-        }
-
         function hexToRgb(hex) {
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            return result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : { r: 0, g: 0, b: 0 };
+            const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return r ? { r: parseInt(r[1], 16), g: parseInt(r[2], 16), b: parseInt(r[3], 16) } : { r: 0, g: 0, b: 0 };
         }
 
-        // ============================================================
-        //  AI COLOR SUGGESTIONS
-        // ============================================================
+        function replaceColor(from, to) {
+            if (!state.currentImage) { showToast('Upload a pattern first.', 'error'); return; }
+            const img = state.currentImage,
+                canvas = state.canvas;
+            const temp = document.createElement('canvas');
+            const ctx = temp.getContext('2d');
+            const w = Math.round(img.width * img.scaleX) || 100,
+                h = Math.round(img.height * img.scaleY) || 100;
+            temp.width = w;
+            temp.height = h;
+            const src = img.toDataURL('image/png');
+            const tImg = new Image();
+            tImg.crossOrigin = 'anonymous';
+            tImg.onload = () => {
+                try {
+                    ctx.drawImage(tImg, 0, 0, w, h);
+                    const data = ctx.getImageData(0, 0, w, h);
+                    const d = data.data;
+                    const f = hexToRgb(from),
+                        t = hexToRgb(to);
+                    for (let i = 0; i < d.length; i += 4) {
+                        const dist = Math.sqrt(Math.pow(d[i] - f.r, 2) + Math.pow(d[i + 1] - f.g, 2) + Math.pow(d[i + 2] -
+                            f.b, 2));
+                        if (dist < 40) { d[i] = t.r;
+                            d[i + 1] = t.g;
+                            d[i + 2] = t.b; }
+                    }
+                    ctx.putImageData(data, 0, 0);
+                    const url = temp.toDataURL('image/png');
+                    fabric.Image.fromURL(url, (ni) => {
+                        if (!ni) { showToast('Replace failed.', 'error'); return; }
+                        const sx = img.scaleX || 1,
+                            sy = img.scaleY || 1;
+                        const l = img.left || 0,
+                            tp = img.top || 0,
+                            a = img.angle || 0;
+                        canvas.remove(img);
+                        ni.scaleX = sx;
+                        ni.scaleY = sy;
+                        ni.set({ left: l, top: tp, angle: a, selectable: true, hasControls: true });
+                        canvas.add(ni);
+                        canvas.setActiveObject(ni);
+                        canvas.renderAll();
+                        state.currentImage = ni;
+                        saveHistory();
+                        showToast(`Replaced ${from} → ${to}`, 'success');
+                    }, { crossOrigin: 'anonymous' });
+                } catch (e) { showToast('Replace error.', 'error'); }
+            };
+            tImg.onerror = () => showToast('Load error.', 'error');
+            tImg.src = src;
+        }
+
         function generateAIColors() {
             const grid = $('aiColorGrid');
             if (!grid) return;
             grid.innerHTML = '';
-
-            const palettes = [
+            const pals = [
                 ['#c8a85e', '#d4b87a', '#f0e0b8', '#8b7a4a'],
                 ['#e74c3c', '#c0392b', '#f1948a', '#922b21'],
                 ['#3498db', '#2e86c1', '#85c1e9', '#1a5276'],
                 ['#2ecc71', '#27ae60', '#82e0aa', '#1a7a3a'],
                 ['#f39c12', '#e67e22', '#f5b041', '#b9770e'],
-                ['#9b59b6', '#8e44ad', '#bb8fce', '#6c3483'],
+                ['#9b59b6', '#8e44ad', '#bb8fce', '#6c3483']
             ];
-
-            const randomPalette = palettes[Math.floor(Math.random() * palettes.length)];
-            randomPalette.forEach(c => {
-                const swatch = document.createElement('div');
-                swatch.className = 'color-swatch';
-                swatch.style.background = c;
-                swatch.style.aspectRatio = '1';
-                swatch.style.borderRadius = 'var(--radius-sm)';
-                swatch.style.cursor = 'pointer';
-                swatch.style.border = '2px solid transparent';
-                swatch.onclick = () => {
-                    $('replaceToColor').value = c;
-                    showToast(`Selected ${c} as target color`, 'info');
-                };
-                grid.appendChild(swatch);
+            const p = pals[Math.floor(Math.random() * pals.length)];
+            p.forEach(c => {
+                const sw = document.createElement('div');
+                sw.className = 'color-swatch';
+                sw.style.background = c;
+                sw.style.aspectRatio = '1';
+                sw.style.borderRadius = 'var(--radius-sm)';
+                sw.style.cursor = 'pointer';
+                sw.style.border = '2px solid transparent';
+                sw.onclick = () => { $('replaceToColor').value = c;
+                    showToast(`Selected ${c}`, 'info'); };
+                grid.appendChild(sw);
             });
         }
 
         // ============================================================
-        //  REPEAT PATTERN GENERATOR (Fixed)
+        //  REPEAT & TEMPLATE
         // ============================================================
         function generateRepeat(mode) {
-            if (!state.currentImage || !state.canvas) {
-                showToast('Please upload a pattern first.', 'error');
-                return;
-            }
-
+            if (!state.currentImage) { showToast('Upload a pattern first.', 'error'); return; }
             state.repeatMode = mode;
-            const img = state.currentImage;
-            const canvas = state.canvas;
-
-            // Get image dimensions in canvas space
-            const w = Math.round(img.width * img.scaleX);
-            const h = Math.round(img.height * img.scaleY);
-            if (w < 5 || h < 5) {
-                showToast('Pattern too small for repeat.', 'error');
-                return;
-            }
-
-            const cw = canvas.getWidth();
-            const ch = canvas.getHeight();
-
-            // Get the image data as a data URL
-            const imgDataUrl = img.toDataURL('image/png');
-
-            // Clear canvas
+            const img = state.currentImage,
+                canvas = state.canvas;
+            const w = Math.round(img.width * img.scaleX),
+                h = Math.round(img.height * img.scaleY);
+            if (w < 5 || h < 5) { showToast('Pattern too small.', 'error'); return; }
+            const cw = canvas.getWidth(),
+                ch = canvas.getHeight();
+            const url = img.toDataURL('image/png');
             canvas.clear();
             canvas.backgroundColor = '#1a1a1a';
-
-            // Calculate grid
-            const cols = Math.ceil(cw / w) + 3;
-            const rows = Math.ceil(ch / h) + 3;
-
-            let offsetX = 0,
-                offsetY = 0;
-            if (mode === 'half-drop') offsetX = w / 2;
-            else if (mode === 'brick') offsetY = h / 2;
-            else if (mode === 'diamond') { offsetX = w / 2;
-                offsetY = h / 2; }
-
-            let loadedCount = 0;
-            const totalTiles = cols * rows;
-
+            const cols = Math.ceil(cw / w) + 3,
+                rows = Math.ceil(ch / h) + 3;
+            let loaded = 0,
+                total = cols * rows;
             for (let r = 0; r < rows; r++) {
                 for (let c = 0; c < cols; c++) {
-                    let x = c * w - w;
-                    let y = r * h - h;
-
+                    let x = c * w - w,
+                        y = r * h - h;
                     if (mode === 'half-drop' && r % 2 === 1) x += w / 2;
                     if (mode === 'brick' && c % 2 === 1) y += h / 2;
-                    if (mode === 'diamond') {
-                        if ((r + c) % 2 === 1) { x += w / 2;
-                            y += h / 2; }
-                    }
-
-                    let scaleX = 1,
-                        scaleY = 1;
-                    if (mode === 'mirror') {
-                        if (c % 2 === 1) scaleX = -1;
-                        if (r % 2 === 1) scaleY = -1;
-                    }
-
-                    // Use fabric.Image.fromURL with the data URL
-                    fabric.Image.fromURL(imgDataUrl, (clone) => {
+                    if (mode === 'diamond' && (r + c) % 2 === 1) { x += w / 2;
+                        y += h / 2; }
+                    let sx = 1,
+                        sy = 1;
+                    if (mode === 'mirror') { if (c % 2 === 1) sx = -1; if (r % 2 === 1) sy = -1; }
+                    fabric.Image.fromURL(url, (clone) => {
                         if (!clone) return;
-                        const sX = img.scaleX || 1;
-                        const sY = img.scaleY || 1;
-                        clone.scaleX = sX * (scaleX === -1 ? -1 : 1);
-                        clone.scaleY = sY * (scaleY === -1 ? -1 : 1);
-                        clone.set({
-                            left: x + (scaleX === -1 ? w : 0),
-                            top: y + (scaleY === -1 ? h : 0),
-                            selectable: false,
-                            evented: false,
-                            hasControls: false,
-                            hasBorders: false,
-                            originX: 'left',
-                            originY: 'top',
-                        });
+                        clone.scaleX = (img.scaleX || 1) * (sx === -1 ? -1 : 1);
+                        clone.scaleY = (img.scaleY || 1) * (sy === -1 ? -1 : 1);
+                        clone.set({ left: x + (sx === -1 ? w : 0), top: y + (sy === -1 ? h : 0), selectable: false,
+                            evented: false, hasControls: false, hasBorders: false, originX: 'left',
+                            originY: 'top' });
                         canvas.add(clone);
-                        loadedCount++;
-                        if (loadedCount === totalTiles) {
-                            canvas.renderAll();
+                        loaded++;
+                        if (loaded === total) { canvas.renderAll();
                             saveHistory();
-                            showToast(`Repeat pattern: ${mode} applied!`, 'success');
-                        }
+                            showToast(`Repeat: ${mode} applied!`, 'success'); }
                     }, { crossOrigin: 'anonymous' });
                 }
             }
-
-            // Fallback: if no images loaded after timeout, render what we have
-            setTimeout(() => {
-                if (loadedCount < totalTiles) {
-                    canvas.renderAll();
+            setTimeout(() => { if (loaded < total) { canvas.renderAll();
                     saveHistory();
-                    showToast(`Repeat pattern: ${mode} applied (partial).`, 'info');
-                }
-            }, 2000);
+                    showToast(`Repeat: ${mode} (partial)`, 'info'); } }, 2000);
         }
 
-        // ============================================================
-        //  TEMPLATE RENDER (Fixed)
-        // ============================================================
         function renderTemplate(type) {
-            if (!state.currentImage || !state.canvas) {
-                showToast('Please upload a pattern first.', 'error');
-                return;
-            }
-
+            if (!state.currentImage) { showToast('Upload a pattern first.', 'error'); return; }
             state.templateType = type;
-            const canvas = state.canvas;
-            const img = state.currentImage;
-            const cw = canvas.getWidth();
-            const ch = canvas.getHeight();
-
+            const canvas = state.canvas,
+                img = state.currentImage;
+            const cw = canvas.getWidth(),
+                ch = canvas.getHeight();
             canvas.clear();
             canvas.backgroundColor = '#1a1a1a';
-
             const colors = ['#c8a85e', '#d4b87a', '#8b7a4a', '#f0e0b8'];
-
-            // Draw template shapes based on type
             const rects = [];
-            const labels = [];
-
             if (type === 'saree') {
                 rects.push({ x: 50, y: 50, w: cw - 100, h: ch - 100, fill: colors[0], label: 'Body' });
                 rects.push({ x: 50, y: 50, w: 25, h: ch - 100, fill: colors[1], label: 'Border' });
@@ -1879,667 +1714,117 @@
                 rects.push({ x: 40, y: 40, w: 25, h: ch - 80, fill: colors[1], label: 'Edge' });
                 rects.push({ x: cw - 65, y: 40, w: 25, h: ch - 80, fill: colors[1], label: 'Edge' });
             }
-
-            // Draw rects
             rects.forEach(r => {
-                const rect = new fabric.Rect({
-                    left: r.x,
-                    top: r.y,
-                    width: r.w,
-                    height: r.h,
-                    fill: r.fill,
-                    opacity: 0.85,
-                    stroke: '#333',
-                    strokeWidth: 1,
-                    selectable: false,
-                    evented: false,
-                });
+                const rect = new fabric.Rect({ left: r.x, top: r.y, width: r.w, height: r.h, fill: r.fill,
+                    opacity: 0.85, stroke: '#333', strokeWidth: 1, selectable: false, evented: false });
                 canvas.add(rect);
-
-                const label = new fabric.Text(r.label, {
-                    left: r.x + 10,
-                    top: r.y + 10,
-                    fontSize: 14,
-                    fill: '#fff',
-                    fontFamily: 'Inter',
-                    fontWeight: 600,
-                    selectable: false,
-                    evented: false,
-                });
-                canvas.add(label);
+                const lbl = new fabric.Text(r.label, { left: r.x + 10, top: r.y + 10, fontSize: 14, fill: '#fff',
+                    fontFamily: 'Inter', fontWeight: 600, selectable: false, evented: false });
+                canvas.add(lbl);
             });
-
-            // Add pattern image on top
-            const imgDataUrl = img.toDataURL('image/png');
-            const scale = Math.min(
-                (cw - 180) / (img.width * img.scaleX || 100),
-                (ch - 180) / (img.height * img.scaleY || 100),
-                0.7
-            );
-
-            fabric.Image.fromURL(imgDataUrl, (clone) => {
-                if (!clone) {
-                    canvas.renderAll();
-                    showToast(`Template: ${type} rendered (without pattern).`, 'info');
-                    return;
-                }
+            const url = img.toDataURL('image/png');
+            const scale = Math.min((cw - 180) / (img.width * img.scaleX || 100), (ch - 180) / (img.height * img.scaleY ||
+                100), 0.7);
+            fabric.Image.fromURL(url, (clone) => {
+                if (!clone) { canvas.renderAll();
+                    showToast(`Template: ${type}`, 'info'); return; }
                 const s = Math.max(scale, 0.1);
                 clone.scaleX = s;
                 clone.scaleY = s;
-                clone.set({
-                    left: (cw - (img.width * s)) / 2,
-                    top: (ch - (img.height * s)) / 2,
-                    selectable: false,
-                    evented: false,
-                    opacity: 0.75,
-                });
+                clone.set({ left: (cw - (img.width * s)) / 2, top: (ch - (img.height * s)) / 2, selectable: false,
+                    evented: false, opacity: 0.75 });
                 canvas.add(clone);
                 canvas.renderAll();
                 showToast(`Template: ${type} rendered!`, 'success');
             }, { crossOrigin: 'anonymous' });
-
-            // If image loading takes too long, still render
-            setTimeout(() => {
-                canvas.renderAll();
-            }, 1000);
+            setTimeout(() => canvas.renderAll(), 1000);
         }
 
         // ============================================================
-        //  HISTORY (Undo/Redo)
-        // ============================================================
-        function saveHistory() {
-            if (!state.canvas || !state.isReady) return;
-            try {
-                const data = state.canvas.toJSON();
-                while (state.history.length > state.maxHistory) {
-                    state.history.shift();
-                }
-                // Avoid duplicate identical entries
-                if (state.history.length > 0) {
-                    const last = state.history[state.history.length - 1];
-                    if (JSON.stringify(last) === JSON.stringify(data)) {
-                        return;
-                    }
-                }
-                state.history.push(data);
-                state.historyIndex = state.history.length - 1;
-            } catch (e) {
-                console.warn('Save history error:', e);
-            }
-        }
-
-        function undo() {
-            if (!state.canvas || !state.isReady) return;
-            if (state.historyIndex > 0) {
-                state.historyIndex--;
-                restoreHistory(state.history[state.historyIndex]);
-                showToast('Undo', 'info', 1500);
-            } else {
-                showToast('Nothing to undo', 'info', 1500);
-            }
-        }
-
-        function redo() {
-            if (!state.canvas || !state.isReady) return;
-            if (state.historyIndex < state.history.length - 1) {
-                state.historyIndex++;
-                restoreHistory(state.history[state.historyIndex]);
-                showToast('Redo', 'info', 1500);
-            } else {
-                showToast('Nothing to redo', 'info', 1500);
-            }
-        }
-
-        function restoreHistory(data) {
-            if (!state.canvas || !state.isReady) return;
-            try {
-                state.canvas.loadFromJSON(data, () => {
-                    state.canvas.renderAll();
-                    // Re-link currentImage
-                    const objs = state.canvas.getObjects();
-                    for (const obj of objs) {
-                        if (obj.type === 'image') {
-                            state.currentImage = obj;
-                            state.isLoaded = true;
-                            placeholder.style.display = 'none';
-                            break;
-                        }
-                    }
-                    updateZoomDisplay();
-                });
-            } catch (e) {
-                console.warn('Restore history error:', e);
-            }
-        }
-
-        // ============================================================
-        //  REMOVE BACKGROUND
+        //  REMOVE BG
         // ============================================================
         function removeBackground() {
-            if (!state.currentImage || !state.canvas) {
-                showToast('Please upload a pattern first.', 'error');
-                return;
-            }
-
-            const img = state.currentImage;
-            const canvas = state.canvas;
-
-            const tempCanvas = document.createElement('canvas');
-            const ctx = tempCanvas.getContext('2d');
-            const w = Math.round(img.width * img.scaleX);
-            const h = Math.round(img.height * img.scaleY);
-            tempCanvas.width = w || 100;
-            tempCanvas.height = h || 100;
-
-            const origData = img.toDataURL('image/png');
-            const tempImg = new Image();
-            tempImg.crossOrigin = 'anonymous';
-
-            tempImg.onload = () => {
+            if (!state.currentImage) { showToast('Upload a pattern first.', 'error'); return; }
+            const img = state.currentImage,
+                canvas = state.canvas;
+            const temp = document.createElement('canvas');
+            const ctx = temp.getContext('2d');
+            const w = Math.round(img.width * img.scaleX) || 100,
+                h = Math.round(img.height * img.scaleY) || 100;
+            temp.width = w;
+            temp.height = h;
+            const src = img.toDataURL('image/png');
+            const tImg = new Image();
+            tImg.crossOrigin = 'anonymous';
+            tImg.onload = () => {
                 try {
-                    ctx.drawImage(tempImg, 0, 0, tempCanvas.width, tempCanvas.height);
-                    const imageData = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
-                    const data = imageData.data;
-
-                    // Make white/light pixels transparent
-                    for (let i = 0; i < data.length; i += 4) {
-                        const r = data[i],
-                            g = data[i + 1],
-                            b = data[i + 2];
-                        if (r > 200 && g > 200 && b > 200) {
-                            data[i + 3] = 0;
-                        }
+                    ctx.drawImage(tImg, 0, 0, w, h);
+                    const data = ctx.getImageData(0, 0, w, h);
+                    const d = data.data;
+                    for (let i = 0; i < d.length; i += 4) {
+                        if (d[i] > 200 && d[i + 1] > 200 && d[i + 2] > 200) d[i + 3] = 0;
                     }
-                    ctx.putImageData(imageData, 0, 0);
-
-                    const newDataUrl = tempCanvas.toDataURL('image/png');
-                    fabric.Image.fromURL(newDataUrl, (newImg) => {
-                        if (!newImg) {
-                            showToast('Failed to process background removal.', 'error');
-                            return;
-                        }
-                        const scaleX = img.scaleX || 1;
-                        const scaleY = img.scaleY || 1;
-                        const left = img.left || 0;
-                        const top = img.top || 0;
-                        const angle = img.angle || 0;
-
+                    ctx.putImageData(data, 0, 0);
+                    const url = temp.toDataURL('image/png');
+                    fabric.Image.fromURL(url, (ni) => {
+                        if (!ni) { showToast('BG remove failed.', 'error'); return; }
+                        const sx = img.scaleX || 1,
+                            sy = img.scaleY || 1,
+                            l = img.left || 0,
+                            tp = img.top || 0,
+                            a = img.angle || 0;
                         canvas.remove(img);
-                        newImg.scaleX = scaleX;
-                        newImg.scaleY = scaleY;
-                        newImg.set({
-                            left: left,
-                            top: top,
-                            angle: angle,
-                            selectable: true,
-                            hasControls: true,
-                            hasBorders: true,
-                        });
-                        canvas.add(newImg);
-                        canvas.setActiveObject(newImg);
+                        ni.scaleX = sx;
+                        ni.scaleY = sy;
+                        ni.set({ left: l, top: tp, angle: a, selectable: true, hasControls: true });
+                        canvas.add(ni);
+                        canvas.setActiveObject(ni);
                         canvas.renderAll();
-                        state.currentImage = newImg;
+                        state.currentImage = ni;
                         saveHistory();
                         showToast('Background removed!', 'success');
                     }, { crossOrigin: 'anonymous' });
-                } catch (e) {
-                    console.error('Remove background error:', e);
-                    showToast('Error removing background: ' + e.message, 'error');
-                }
+                } catch (e) { showToast('BG remove error.', 'error'); }
             };
-            tempImg.onerror = () => {
-                showToast('Failed to load image for background removal.', 'error');
-            };
-            tempImg.src = origData;
+            tImg.onerror = () => showToast('Load error.', 'error');
+            tImg.src = src;
         }
 
         // ============================================================
         //  EXPORT
         // ============================================================
         function exportFile(format) {
-            if (!state.canvas) {
-                showToast('No design to export.', 'error');
-                return;
-            }
-
+            if (!state.canvas) { showToast('No design.', 'error'); return; }
             try {
-                let dataUrl;
-                if (format === 'png') {
-                    dataUrl = state.canvas.toDataURL('image/png');
-                } else if (format === 'jpg') {
-                    dataUrl = state.canvas.toDataURL('image/jpeg', 0.95);
-                } else if (format === 'svg') {
-                    dataUrl = 'data:image/svg+xml;charset=utf-8,' +
-                        encodeURIComponent(state.canvas.toSVG());
-                } else {
-                    dataUrl = state.canvas.toDataURL('image/png');
-                }
-
-                const link = document.createElement('a');
-                const ext = format === 'jpg' ? 'jpg' : format === 'svg' ? 'svg' : 'png';
-                link.download = `${state.patternName || 'design'}.${ext}`;
-                link.href = dataUrl;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast(`Exported as ${format.toUpperCase()}`, 'success');
-            } catch (e) {
-                console.error('Export error:', e);
-                showToast('Export failed: ' + e.message, 'error');
-            }
-        }
-
-        // ============================================================
-        //  NAVIGATION / TABS
-        // ============================================================
-        function setupNavigation() {
-            // Sidebar nav
-            document.querySelectorAll('.sidebar-nav .nav-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    document.querySelectorAll('.sidebar-nav .nav-item').forEach(el => el.classList.remove(
-                    'active'));
-                    item.classList.add('active');
-                    state.activeTab = item.dataset.tab;
-                    if (window.innerWidth <= 992) {
-                        sidebar.classList.remove('open');
-                        mobileOverlay.classList.remove('open');
-                    }
-                    showToast(`Switched to ${item.dataset.tab}`, 'info', 1500);
-                });
-            });
-
-            // Panel tabs
-            document.querySelectorAll('.panel-tabs .tab').forEach(tab => {
-                tab.addEventListener('click', () => {
-                    document.querySelectorAll('.panel-tabs .tab').forEach(el => el.classList.remove('active'));
-                    tab.classList.add('active');
-                    const panel = tab.dataset.panel;
-                    document.querySelectorAll('.tab-pane').forEach(el => el.classList.remove('active'));
-                    const target = document.getElementById(`panel-${panel}`);
-                    if (target) target.classList.add('active');
-                });
-            });
-
-            // Sidebar toggle (mobile)
-            $('sidebarToggle').addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                mobileOverlay.classList.toggle('open');
-            });
-
-            // Panel toggle (mobile)
-            $('panelToggle').addEventListener('click', () => {
-                rightPanel.classList.toggle('open');
-                mobileOverlay.classList.toggle('open');
-            });
-
-            // Mobile overlay
-            mobileOverlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                rightPanel.classList.remove('open');
-                mobileOverlay.classList.remove('open');
-            });
-        }
-
-        // ============================================================
-        //  EVENT BINDINGS
-        // ============================================================
-        function bindEvents() {
-            // Undo / Redo
-            $('undoBtn').onclick = undo;
-            $('redoBtn').onclick = redo;
-
-            // Flip
-            $('flipHBtn').onclick = () => {
-                if (state.currentImage) {
-                    state.currentImage.flipX = !state.currentImage.flipX;
-                    state.canvas.renderAll();
-                    saveHistory();
-                    showToast('Flipped horizontally', 'info');
-                } else {
-                    showToast('Upload a pattern first.', 'error');
-                }
-            };
-            $('flipVBtn').onclick = () => {
-                if (state.currentImage) {
-                    state.currentImage.flipY = !state.currentImage.flipY;
-                    state.canvas.renderAll();
-                    saveHistory();
-                    showToast('Flipped vertically', 'info');
-                } else {
-                    showToast('Upload a pattern first.', 'error');
-                }
-            };
-
-            // Rotate
-            $('rotateBtn').onclick = () => {
-                if (state.currentImage) {
-                    const angle = (state.currentImage.angle || 0) + 90;
-                    state.currentImage.rotate(angle);
-                    state.canvas.renderAll();
-                    saveHistory();
-                    showToast('Rotated 90°', 'info');
-                } else {
-                    showToast('Upload a pattern first.', 'error');
-                }
-            };
-
-            // Remove BG
-            $('removeBgBtn').onclick = removeBackground;
-
-            // Smooth (placeholder)
-            $('smoothBtn').onclick = () => {
-                if (state.currentImage) {
-                    showToast('Edges smoothed! (feature in development)', 'info');
-                } else {
-                    showToast('Upload a pattern first.', 'error');
-                }
-            };
-
-            // Apply size
-            $('applySizeBtn').onclick = () => {
-                if (!state.currentImage) {
-                    showToast('Upload a pattern first.', 'error');
-                    return;
-                }
-                const w = parseInt($('patternWidth').value) || 800;
-                const h = parseInt($('patternHeight').value) || 800;
-                const img = state.currentImage;
-                const currentW = img.width * img.scaleX;
-                const currentH = img.height * img.scaleY;
-                if (currentW > 0 && currentH > 0) {
-                    const scaleX = w / currentW;
-                    const scaleY = h / currentH;
-                    img.scaleX = img.scaleX * scaleX;
-                    img.scaleY = img.scaleY * scaleY;
-                    state.canvas.renderAll();
-                    saveHistory();
-                    showToast(`Resized to ${w}×${h}`, 'success');
-                }
-            };
-
-            // Replace color
-            $('executeReplaceBtn').onclick = () => {
-                const from = $('replaceFromColor').value;
-                const to = $('replaceToColor').value;
-                replaceColor(from, to);
-            };
-
-            // Add color
-            $('addColorBtn').onclick = () => {
-                const c = $('customColorPicker').value;
-                if (!state.colors.includes(c)) {
-                    state.colors.push(c);
-                    updateColorPalette();
-                    showToast(`Added ${c}`, 'info');
-                } else {
-                    showToast('Color already in palette.', 'info');
-                }
-            };
-
-            // Replace color in palette
-            $('replaceColorBtn').onclick = () => {
-                const c = $('customColorPicker').value;
-                state.selectedColor = c;
-                const active = document.querySelector('#colorPaletteGrid .color-swatch.active');
-                if (active) {
-                    const idx = Array.from(document.querySelectorAll('#colorPaletteGrid .color-swatch')).indexOf(active);
-                    if (idx > -1 && idx < state.colors.length) {
-                        state.colors[idx] = c;
-                        updateColorPalette();
-                        showToast(`Updated color to ${c}`, 'info');
-                    }
-                } else {
-                    showToast('Select a color in the palette first.', 'error');
-                }
-            };
-
-            // AI generate
-            $('generateAIColorsBtn').onclick = generateAIColors;
-
-            // Color library presets
-            document.querySelectorAll('[data-library]').forEach(btn => {
-                btn.onclick = () => {
-                    const lib = btn.dataset.library;
-                    const palettes = {
-                        batik: ['#8b4513', '#d4a373', '#2d1b0e', '#c8a85e', '#5a3d1a'],
-                        srilankan: ['#c8a85e', '#8b7a4a', '#e74c3c', '#2ecc71', '#3498db'],
-                        nature: ['#2ecc71', '#27ae60', '#f39c12', '#e67e22', '#1abc9c'],
-                        modern: ['#2c3e50', '#e74c3c', '#ecf0f1', '#3498db', '#f1c40f'],
-                        luxury: ['#c8a85e', '#f5d78e', '#8b7a4a', '#2d1b0e', '#d4af37'],
-                        wedding: ['#f5f0e8', '#d4b87a', '#c8a85e', '#f0e0b8', '#8b7a4a'],
-                        kids: ['#ff6b6b', '#feca57', '#48dbfb', '#1dd1a1', '#f368e0'],
-                    };
-                    const colors = palettes[lib] || palettes.batik;
-                    state.colors = colors;
-                    updateColorPalette();
-                    const grid = $('libraryColorGrid');
-                    if (grid) {
-                        grid.innerHTML = '';
-                        colors.forEach(c => {
-                            const sw = document.createElement('div');
-                            sw.className = 'color-swatch';
-                            sw.style.background = c;
-                            sw.style.aspectRatio = '1';
-                            sw.style.borderRadius = 'var(--radius-sm)';
-                            sw.style.cursor = 'pointer';
-                            sw.style.border = '2px solid transparent';
-                            sw.onclick = () => {
-                                $('replaceToColor').value = c;
-                                showToast(`Selected ${c}`, 'info');
-                            };
-                            grid.appendChild(sw);
-                        });
-                    }
-                    showToast(`Loaded ${lib} palette`, 'success');
-                };
-            });
-
-            // Repeat modes
-            document.querySelectorAll('.repeat-preview .rp-item').forEach(item => {
-                item.onclick = () => {
-                    document.querySelectorAll('.repeat-preview .rp-item').forEach(el => el.classList.remove(
-                        'active'));
-                    item.classList.add('active');
-                    const mode = item.dataset.mode;
-                    generateRepeat(mode);
-                };
-            });
-
-            // Template selection
-            document.querySelectorAll('.template-grid .template-item').forEach(item => {
-                item.onclick = () => {
-                    document.querySelectorAll('.template-grid .template-item').forEach(el => el.classList.remove(
-                        'active'));
-                    item.classList.add('active');
-                    state.templateType = item.dataset.template;
-                    showToast(`Selected ${item.dataset.template}`, 'info');
-                };
-            });
-
-            // Render template
-            $('renderTemplateBtn').onclick = () => {
-                renderTemplate(state.templateType);
-            };
-
-            // Fabric type
-            $('fabricTypeSelect').onchange = () => {
-                state.fabricType = $('fabricTypeSelect').value;
-                const swatch = $('fabricSwatch');
-                const fabrics = {
-                    cotton: 'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 10px, #333 10px, #333 20px)',
-                    rayon: 'repeating-linear-gradient(90deg, #1a1a2a, #1a1a2a 8px, #2a2a3a 8px, #2a2a3a 16px)',
-                    silk: 'repeating-linear-gradient(135deg, #2a1a1a, #2a1a1a 12px, #3a2a2a 12px, #3a2a2a 24px)',
-                    linen: 'repeating-linear-gradient(0deg, #1a1a1a, #1a1a1a 4px, #2a2a2a 4px, #2a2a2a 8px)',
-                    satin: 'repeating-linear-gradient(70deg, #2a2a3a, #2a2a3a 6px, #3a3a4a 6px, #3a3a4a 12px)',
-                    voile: 'repeating-linear-gradient(20deg, #1a1a22, #1a1a22 14px, #2a2a32 14px, #2a2a32 28px)',
-                };
-                swatch.style.background = fabrics[state.fabricType] || fabrics.cotton;
-            };
-
-            // Apply to fabric
-            $('applyToFabricBtn').onclick = () => {
-                if (state.currentImage) {
-                    showToast(`Applied pattern to ${state.fabricType} fabric!`, 'success');
-                    state.canvas.backgroundColor = '#2a2a2a';
-                    state.canvas.renderAll();
-                } else {
-                    showToast('Upload a pattern first.', 'error');
-                }
-            };
-
-            // Export
-            $('exportBtn').onclick = () => {
-                if (!state.currentImage) {
-                    showToast('Upload a pattern first.', 'error');
-                    return;
-                }
-                // Simple export dropdown via modal
-                showModal('Export Design', 'Choose export format:', () => {});
-                const actions = document.querySelector('.modal .modal-actions');
-                // Clear previous extra buttons
-                const existing = actions.querySelectorAll('.export-format-btn');
-                existing.forEach(el => el.remove());
-
-                const formats = ['png', 'jpg', 'svg'];
-                formats.forEach(f => {
-                    const btn = document.createElement('button');
-                    btn.className = 'export-format-btn';
-                    btn.textContent = f.toUpperCase();
-                    btn.style.cssText =
-                        'flex:1;padding:8px;border:none;border-radius:var(--radius-sm);background:var(--accent-dim);border:1px solid var(--accent);color:var(--accent);cursor:pointer;font-weight:600;';
-                    btn.onclick = () => {
-                        exportFile(f);
-                        modalOverlay.classList.remove('open');
-                    };
-                    actions.appendChild(btn);
-                });
-                // Move confirm/cancel to end
-                const confirmBtn = $('modalConfirm');
-                const cancelBtn = $('modalCancel');
-                actions.appendChild(cancelBtn);
-                actions.appendChild(confirmBtn);
-            };
-
-            // New project
-            $('newProjectBtn').onclick = () => {
-                showModal('New Project', 'This will clear the current design. Continue?', () => {
-                    if (state.canvas) {
-                        state.canvas.clear();
-                        state.canvas.backgroundColor = '#1a1a1a';
-                        state.currentImage = null;
-                        state.isLoaded = false;
-                        placeholder.style.display = 'flex';
-                        state.canvas.renderAll();
-                        state.history = [];
-                        state.historyIndex = -1;
-                        showToast('New project created', 'success');
-                    }
-                });
-            };
-
-            // Save project
-            $('saveProjectBtn').onclick = () => {
-                if (state.currentImage && state.canvas) {
-                    try {
-                        const data = state.canvas.toJSON();
-                        localStorage.setItem('batik_project', JSON.stringify(data));
-                        localStorage.setItem('batik_project_name', $('patternName').value);
-                        showToast('Project saved locally!', 'success');
-                    } catch (e) {
-                        showToast('Save failed: ' + e.message, 'error');
-                    }
-                } else {
-                    showToast('No design to save.', 'error');
-                }
-            };
-
-            // Publish
-            $('publishBtn').onclick = () => {
-                if (state.currentImage) {
-                    showToast('✨ Published to gallery! (demo)', 'success');
-                } else {
-                    showToast('Upload a pattern first.', 'error');
-                }
-            };
-
-            // User avatar
-            $('userAvatar').onclick = () => {
-                showToast('👤 User: Designer Pro', 'info');
-            };
+                let url;
+                if (format === 'png') url = state.canvas.toDataURL('image/png');
+                else if (format === 'jpg') url = state.canvas.toDataURL('image/jpeg', 0.95);
+                else if (format === 'svg') url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(state.canvas
+                    .toSVG());
+                else url = state.canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.download = `${$('patternName').value || 'design'}.${format === 'jpg' ? 'jpg' : format === 'svg' ? 'svg' : 'png'}`;
+                a.href = url;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                showToast(`Exported ${format.toUpperCase()}`, 'success');
+            } catch (e) { showToast('Export failed.', 'error'); }
         }
 
         // ============================================================
         //  INIT
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
-            try {
-                initCanvas();
-
-                // Wait for canvas to be ready then setup rest
-                const checkReady = setInterval(() => {
-                    if (state.isReady) {
-                        clearInterval(checkReady);
-                        setupNavigation();
-                        bindEvents();
-                        updateColorPalette();
-                        generateAIColors();
-
-                        // Initialize fabric swatch
-                        const swatch = $('fabricSwatch');
-                        if (swatch) {
-                            swatch.style.background =
-                            'repeating-linear-gradient(45deg, #2a2a2a, #2a2a2a 10px, #333 10px, #333 20px)';
-                        }
-
-                        // Load saved project
-                        const saved = localStorage.getItem('batik_project');
-                        if (saved && state.canvas) {
-                            try {
-                                const data = JSON.parse(saved);
-                                state.canvas.loadFromJSON(data, () => {
-                                    state.canvas.renderAll();
-                                    const objs = state.canvas.getObjects();
-                                    for (const obj of objs) {
-                                        if (obj.type === 'image') {
-                                            state.currentImage = obj;
-                                            state.isLoaded = true;
-                                            placeholder.style.display = 'none';
-                                            break;
-                                        }
-                                    }
-                                    showToast('Restored saved project', 'info');
-                                });
-                                const name = localStorage.getItem('batik_project_name');
-                                if (name) $('patternName').value = name;
-                            } catch (e) { /* ignore */ }
-                        }
-
-                        console.log('🎨 Batik Fabric Design Studio loaded successfully.');
-                    }
-                }, 100);
-
-                // Safety timeout
-                setTimeout(() => {
-                    if (!state.isReady) {
-                        console.warn('Canvas took too long to initialize, forcing setup.');
-                        if (!state.canvas) {
-                            // Try one more time
-                            initCanvas();
-                        }
-                        setupNavigation();
-                        bindEvents();
-                        updateColorPalette();
-                        generateAIColors();
-                        state.isReady = true;
-                    }
-                }, 5000);
-
-            } catch (e) {
-                console.error('Initialization error:', e);
-                showToast('Failed to initialize: ' + e.message, 'error');
-            }
+            initCanvas();
+            // Fallback if canvas takes too long
+            setTimeout(() => {
+                if (!state.isReady) {
+                    console.warn('Forcing init...');
+                    initCanvas();
+                }
+            }, 2000);
         });
     </script>
-
 </body>
 </html>
